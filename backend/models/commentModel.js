@@ -17,5 +17,6 @@ const commentSchema = mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now(),
-  }
+  },
+  likes: Number,
 })
