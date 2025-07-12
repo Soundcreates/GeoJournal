@@ -21,8 +21,23 @@ const userSchema = mongoose.Schema({
     likedComments: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment'
-    }]
-})
+    }],
+
+    requestsSent: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    requestsReceived: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    friends: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+
+    }],
+
+});
 
 const userModel = mongoose.model('User', userSchema);
 
