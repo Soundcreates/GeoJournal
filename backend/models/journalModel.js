@@ -23,7 +23,8 @@ const journalSchema = mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now,
-    }
+    },
+
 })
 
 const journalModel = mongoose.model('Journal', journalSchema);
