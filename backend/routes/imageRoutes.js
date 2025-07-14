@@ -2,7 +2,12 @@ const express = require('express');
 const imageRouter = express.Router();
 const { postImage } = require('../controllers/imageController');
 const authController = require('../controllers/authController');
+const multer = require('multer');
+const cloudinary = require('../utils/cloudinary');
 
-imageRouter.post('/', authMiddleware, postImage);
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+imageRouter.post('/', upload.single('image'), authMiddleware, postImage);
 
 module.exports = imageRouter;
