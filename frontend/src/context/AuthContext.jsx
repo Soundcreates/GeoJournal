@@ -1,5 +1,5 @@
 import React, { useContext, createContext, useState, useEffect } from "react";
-import { fetchUser } from "../service/api";
+import { fetchStuff } from "../service/api";
 
 export const AuthContext = createContext();
 
@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
           return;
         }
 
-        const response = await fetchUser.get("/auth/me", {
+        const response = await fetchStuff.get("/auth/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

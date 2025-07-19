@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const fetchUser = axios.create({
+export const fetchStuff = axios.create({
   baseURL: 'http://localhost:5000/api',
-
+  withCredentials: true
 });
