@@ -12,6 +12,6 @@ journalRouter.put('/:id', authMiddleware, updateJournal);
 
 journalRouter.delete('/:id', authMiddleware, deleteJournal);
 
-journalRouter.get('/nearby?lat=<latitude>&lng=<longitude>&radius=<km>');
+
 
 module.exports = journalRouter;

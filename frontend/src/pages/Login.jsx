@@ -1,26 +1,42 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router";
 import { MapPin, Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { fetchStuff } from "../service/api";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
+  const { loading, setLoading } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+    setLoading(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    console.log("Logging in:", email, password);
-    navigate("/dashboard");
-    setIsLoading(false);
+    try {
+      const response = await fetchStuff.post("/auth/login");
+      setLoading(true);
+      setError(response.data.message || "");
+      if (response.status === 200) {
+        localStorage.setItem("token", response.data.token);
+        navigate("/dashboard");
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log(err.message);
+      setError("Login failed");
+    }
   };
-
+  const handleChange = (e) => {
+    const [name, value] = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -47,8 +63,8 @@ export default function Login() {
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={formData.email}
+                  onChange={handleChange}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   placeholder="Enter your email"
                   required
@@ -65,8 +81,8 @@ export default function Login() {
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
                   type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={formData.password}
+                  onChange={handleChange}
                   className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   placeholder="Enter your password"
                   required
@@ -105,10 +121,10 @@ export default function Login() {
             {/* Sign In Button */}
             <button
               onClick={handleSubmit}
-              disabled={isLoading}
+              disabled={loading}
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 px-4 rounded-xl transition-colors flex items-center justify-center"
             >
-              {isLoading ? (
+              {loading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
                   Signing in...

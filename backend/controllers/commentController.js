@@ -87,7 +87,7 @@ module.exports.deleteComment = async (req, res) => {
     }
 
     await commentModel.findByIdAndDelete(commentId);
-    return res, satisfies.status(200).json({ message: "Comment deleted successfully" });
+    return res.status(200).json({ message: "Comment deleted successfully" });
 
 
   } catch (err) {

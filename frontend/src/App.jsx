@@ -1,21 +1,35 @@
 import { BrowserRouter, Routes, Route } from "react-router";
-
+import { useAuth } from "./context/AuthContext";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import { AuthProvider } from "./context/AuthContext";
 import NotFound from "./pages/NotFound";
+import Loader from "./pages/Loader";
+import ProfilePage from "./pages/ProfilePage";
+
+const AppContent = () => {
+  const { loading } = useAuth();
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  return (
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/profile" element={<ProfilePage />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
 
 const App = () => (
   <BrowserRouter>
     <AuthProvider>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <AppContent />
     </AuthProvider>
   </BrowserRouter>
 );

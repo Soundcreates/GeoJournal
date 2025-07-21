@@ -16,10 +16,10 @@ const journalSchema = mongoose.Schema({
     hashtags: [{
         type: String,
     }],
-    location: {
-        type: "Point",
-        coordinates: [longitude, latitude],
-    },
+    // location: {
+    //     type: "Point",
+    //     coordinates: [longitude, latitude],
+    // },
     createdAt: {
         type: Date,
         default: Date.now,

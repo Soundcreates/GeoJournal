@@ -5,24 +5,30 @@ const authMiddleware = async (req, res, next) => {
 
   try {
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ message: "Not authorized!" });
+      return res.status(401).json({ message: "Access denied. No token provided." });
     }
 
     const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_KEY);
-    if (decoded) {
-      req.user = {
-        id: decoded.id,
 
-      }
-
-      next();
-    } else {
-      return res.status(401).json({ message: "Invalid or expired token" });
+    if (!token) {
+      return res.status(401).json({ message: "Access denied. No token provided." });
     }
+
+    const decoded = jwt.verify(token, process.env.JWT_KEY);
+    req.user = {
+      id: decoded.id,
+    };
+
+    next();
   } catch (err) {
-    console.log(err.message);
-    return res.status(500).json({ message: "Internal server error please try again later" });
+    if (err.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: "Token expired. Please log in again." });
+    } else if (err.name === 'JsonWebTokenError') {
+      return res.status(401).json({ message: "Invalid token." });
+    } else {
+      console.log(err.message);
+      return res.status(500).json({ message: "Internal server error" });
+    }
   }
 }
 

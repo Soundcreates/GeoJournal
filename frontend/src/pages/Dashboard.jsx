@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
+import Loader from "./Loader.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 import {
   MapPin,
   Plus,
@@ -23,6 +25,7 @@ import {
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { loading } = useAuth();
   const [viewMode, setViewMode] = useState("grid");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
@@ -91,6 +94,10 @@ export default function Dashboard() {
       comments: 3,
     },
   ]);
+
+  const handleNavigateProfile = () => {
+    navigate("/profile");
+  };
 
   const [stats] = useState({
     totalEntries: journalEntries.length,
@@ -254,12 +261,15 @@ export default function Dashboard() {
             </div>
 
             {/* Profile Menu */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 ">
               <button className="relative p-2 text-gray-400 hover:text-gray-600">
                 <div className="w-2 h-2 bg-red-500 rounded-full absolute top-1 right-1"></div>
                 <Globe className="w-6 h-6" />
               </button>
-              <div className="flex items-center space-x-3">
+              <div
+                className="flex items-center p-2 space-x-3 cursor-pointer hover:bg-gray-100 hover:rounded-xl transition-all duration-300"
+                onClick={handleNavigateProfile}
+              >
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
                   <User className="w-5 h-5 text-white" />
                 </div>

@@ -1,7 +1,7 @@
 const express = require('express');
 const imageRouter = express.Router();
 const { postImage } = require('../controllers/imageController');
-const authController = require('../controllers/authController');
+const authMiddleware = require('../middleware/authMiddleware');
 const multer = require('multer');
 const cloudinary = require('../utils/cloudinary');
 
