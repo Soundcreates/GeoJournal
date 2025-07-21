@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router";
 import { MapPin, Eye, EyeOff, Mail, Lock, User, Check, X } from "lucide-react";
-
+import { fetchStuff } from "../service/api";
+import { useAuth } from "../context/AuthContext";
 export default function Register() {
+  const { loading, setLoading, setUser, setFirstName } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
@@ -13,8 +15,8 @@ export default function Register() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [error, setError] = useState(null);
 
   // Password validation
   const passwordValidation = {
@@ -39,15 +41,28 @@ export default function Register() {
     if (!isPasswordValid || !passwordsMatch || !agreedToTerms) {
       return;
     }
+    if (formData.confirmPassword !== formData.password) {
+      setError("Passwords do not match");
+      return;
+    }
 
-    setIsLoading(true);
+    setLoading(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    console.log("Registering:", formData);
-    navigate("/dashboard");
-    setIsLoading(false);
+    //call backend API to register user
+    const response = await fetchStuff.post("/auth/register", {
+      username: formData.firstName + " " + formData.lastName,
+      email: formData.email,
+      password: formData.password,
+      firstName: formData.firstName,
+    });
+    if (response.status === 201) {
+      setUser(response.data.user);
+      navigate("/dashboard");
+      setError(null);
+      setLoading(false);
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+    }
   };
 
   const ValidationIcon = ({ isValid }) =>
@@ -291,14 +306,11 @@ export default function Register() {
             <button
               onClick={handleSubmit}
               disabled={
-                isLoading ||
-                !isPasswordValid ||
-                !passwordsMatch ||
-                !agreedToTerms
+                loading || !isPasswordValid || !passwordsMatch || !agreedToTerms
               }
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-xl transition-colors flex items-center justify-center"
             >
-              {isLoading ? (
+              {loading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
                   Creating account...

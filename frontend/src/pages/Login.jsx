@@ -5,7 +5,7 @@ import { fetchStuff } from "../service/api";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
-  const { loading, setLoading } = useAuth();
+  const { loading, setLoading, setUser } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({
@@ -20,13 +20,22 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await fetchStuff.post("/auth/login");
+      const response = await fetchStuff.post("/auth/login", {
+        email: formData.email,
+        password: formData.password,
+      });
       setLoading(true);
       setError(response.data.message || "");
       if (response.status === 200) {
         localStorage.setItem("token", response.data.token);
+        setUser(response.data.user);
         navigate("/dashboard");
         setLoading(false);
+      } else {
+        navigate("/");
+        setLoading(false);
+
+        setError(response.data.message || "Login failed");
       }
     } catch (err) {
       console.log(err.message);
@@ -34,7 +43,7 @@ export default function Login() {
     }
   };
   const handleChange = (e) => {
-    const [name, value] = e.target;
+    const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
   return (
@@ -63,6 +72,7 @@ export default function Login() {
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
                   type="email"
+                  name="email"
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
@@ -82,6 +92,7 @@ export default function Login() {
                 <input
                   type={showPassword ? "text" : "password"}
                   value={formData.password}
+                  name="password"
                   onChange={handleChange}
                   className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   placeholder="Enter your password"

@@ -9,8 +9,10 @@ import {
   Plane,
   Star,
 } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 const ProfilePage = () => {
+  const { user } = useAuth();
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -118,7 +120,7 @@ const ProfilePage = () => {
 
                 <div className="text-center md:text-left text-white flex-1">
                   <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                    Alex Journey
+                    {user.username}
                   </h1>
                   <div className="space-y-2 mb-6">
                     <p className="flex items-center justify-center md:justify-start gap-2 text-lg">

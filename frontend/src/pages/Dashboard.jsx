@@ -25,7 +25,7 @@ import {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { loading } = useAuth();
+  const { loading, user } = useAuth();
   const [viewMode, setViewMode] = useState("grid");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
@@ -274,7 +274,7 @@ export default function Dashboard() {
                   <User className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-sm font-medium text-gray-700">
-                  Alex Explorer
+                  {user.username}
                 </span>
               </div>
             </div>
@@ -286,7 +286,7 @@ export default function Dashboard() {
         {/* Welcome Section */}
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome back, Alex! 🌍
+            Welcome , {user.firstName}! 🌍
           </h2>
           <p className="text-gray-600">Ready to capture your next adventure?</p>
         </div>

@@ -3,8 +3,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 module.exports.registerController = async (req, res) => {
-  const { username, email, password } = req.body;
-
+  const { username, email, password, firstName } = req.body;
+  console.log("register endpoint hit!");
   try {
     const user = await userModel.findOne({ email: email });
     if (user) {
@@ -20,7 +20,7 @@ module.exports.registerController = async (req, res) => {
       username,
       email,
       password: hashedPassword,
-
+      firstName,
     });
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_KEY, { expiresIn: '7d' });
     return res.status(201).json({
@@ -30,7 +30,8 @@ module.exports.registerController = async (req, res) => {
         id: newUser._id,
         username: newUser.username,
         email: newUser.email,
-        profileImage: newUser.profileImage
+        profileImage: newUser.profileImage,
+        firstName,
       }
     });
   } catch (err) {
