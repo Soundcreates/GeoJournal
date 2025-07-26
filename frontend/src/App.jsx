@@ -7,6 +7,7 @@ import { AuthProvider } from "./context/AuthContext";
 import NotFound from "./pages/NotFound";
 import Loader from "./pages/Loader";
 import ProfilePage from "./pages/ProfilePage";
+import AddEntry from "./pages/AddEntry";
 
 const AppContent = () => {
   const { loading } = useAuth();
@@ -21,6 +22,7 @@ const AppContent = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/add-entry" element={<AddEntry />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

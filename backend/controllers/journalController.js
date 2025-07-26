@@ -1,6 +1,7 @@
 const journalModel = require('../models/journalModel');
 
 module.exports.createJournal = async (req, res) => {
+  const { title, description, imageUrl, location, coordinates } = req.body;
 
 }
 

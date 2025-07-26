@@ -20,6 +20,15 @@ const journalSchema = mongoose.Schema({
     //     type: "Point",
     //     coordinates: [longitude, latitude],
     // },
+    location: {
+        type: String,
+        required: true,
+    },
+
+    coordinates: {
+        type: [Number],
+        required: true,
+    },
     createdAt: {
         type: Date,
         default: Date.now,
