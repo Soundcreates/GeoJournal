@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { useMapEvents } from "react-leaflet/hooks";
 import { Upload, Sparkles, MapPin, FileText, Image } from "lucide-react";
+import { fetchStuff } from "../service/api";
 
 function AddMarkerOnClick({
   markerLocation,
@@ -15,18 +16,40 @@ function AddMarkerOnClick({
       const { lat, lng } = e.latlng;
       setIsLoading(true);
       setMarkerLocation(e.latlng);
-
+      const mapApi = "pk.c974ea1d688cb11464cc03ca87d32fef";
       try {
-        //making the api call
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
-        );
-        const data = await response.json();
+        // Add more parameters and better error handling
+        const url = `https://us1.locationiq.com/v1/reverse?key=${mapApi}&lat=${lat}&lon=${lng}&format=json`;
+        console.log("Fetching from:", url);
 
-        setLocationName(data.display_name || "Location name not found");
+        const response = await fetch(url);
+
+        // Check if response is ok
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // Check content type before parsing JSON
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await response.text();
+          console.error("Non-JSON response:", text.substring(0, 200));
+          throw new Error("Received non-JSON response from server");
+        }
+
+        const data = await response.json();
+        console.log("Nominatim response:", data);
+
+        if (data && data.display_name) {
+          setLocationName(data.display_name);
+        } else {
+          // Fallback to coordinates if no display name
+          setLocationName(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+        }
       } catch (error) {
         console.error("Error fetching location name:", error);
-        setLocationName("Location name not found");
+        // Fallback to coordinates
+        setLocationName(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
       } finally {
         setIsLoading(false);
       }
@@ -38,12 +61,33 @@ function AddMarkerOnClick({
 function AddEntry() {
   const position = [19.2183, 72.9781]; //example coordinates for thane india
   const [markerLocation, setMarkerLocation] = useState(null);
-  const [locationName, setLocationName] = useState("");
+  const [locationName, setLocationName] = useState(
+    "Central park, kolshet road, thane"
+  );
   const [isLoading, setIsLoading] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [geminiLoading, setGeminiLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    locationName: locationName,
+    coordinates: markerLocation ? [markerLocation.lat, markerLocation.lng] : [],
+  });
+  const testingCords = {
+    lat: 19.2322,
+    lng: 72.9781,
+  };
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      locationName: locationName,
+      coordinates: markerLocation
+        ? [markerLocation.lat, markerLocation.lng]
+        : [],
+    }));
+  }, [locationName, markerLocation]);
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -88,9 +132,92 @@ function AddEntry() {
     setUploadedFiles((prev) => prev.filter((file) => file.id !== id));
   };
 
-  const handleGeminiClick = () => {
+  const handleGeminiClick = async () => {
     // This would trigger the Gemini API call
-    console.log("Generating context with Gemini...", { title, locationName });
+    setGeminiLoading(true);
+    try {
+      const response = await fetchStuff.post(
+        "/journals/ask-gemini",
+        {
+          title: formData.title,
+          locationName: formData.locationName,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      console.log("Gemini response:", response.data.aiCaption);
+      const aiCaption = response.data.aiCaption;
+      setFormData((prev) => ({
+        ...prev,
+        description: aiCaption,
+      }));
+    } catch (err) {
+      console.error(err.message);
+    } finally {
+      setGeminiLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    let imageUrls = [];
+    if (uploadedFiles.length > 0) {
+      try {
+        const uploadPromises = uploadedFiles.map((file) => {
+          const formDataForUpload = new FormData();
+          formDataForUpload.append("image", file.file); // Change from "file" to "image"
+          return fetchStuff.post("/images/upload", formDataForUpload, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+        });
+
+        const uploadResponses = await Promise.all(uploadPromises);
+        imageUrls = uploadResponses.map((res) => res.data.url);
+      } catch (error) {
+        console.error("Error uploading images: ", error.message);
+        return; // Don't continue if image upload fails
+      }
+    }
+
+    try {
+      const finalPayLoad = {
+        title: formData.title,
+        description: formData.description,
+        imageUrl: imageUrls[0] || "", // Use single imageUrl field
+        locationName: formData.locationName,
+        coordinates: formData.coordinates,
+      };
+
+      await fetchStuff.post("/journals", finalPayLoad, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      console.log("Journal entry created successfully");
+
+      // Reset form after successful submission
+      setFormData({
+        title: "",
+        description: "",
+      });
+      setUploadedFiles([]);
+    } catch (err) {
+      console.error("Error creating journal entry: ", err.message);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   return (
@@ -113,7 +240,10 @@ function AddEntry() {
           </div>
 
           {/* Form Content */}
-          <div className="p-6 space-y-6 h-[calc(100%-120px)] overflow-y-auto">
+          <form
+            onSubmit={handleSubmit}
+            className="p-6 space-y-6 h-[calc(100%-120px)] overflow-y-auto"
+          >
             {/* Location Display */}
             {locationName && (
               <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
@@ -137,8 +267,9 @@ function AddEntry() {
               </label>
               <input
                 type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
                 placeholder="Enter a compelling title..."
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-200 text-gray-700 placeholder-gray-400"
               />
@@ -150,22 +281,34 @@ function AddEntry() {
                 <FileText className="w-4 h-4" />
                 Description
               </label>
-              <div className="relative">
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Describe your experience..."
-                  rows={4}
-                  className="w-full px-4 py-3 pr-14 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-200 text-gray-700 placeholder-gray-400 resize-none"
-                />
-                <button
-                  onClick={handleGeminiClick}
-                  className="absolute right-3 top-3 p-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 transform hover:scale-105 shadow-lg"
-                  title="Generate with Gemini AI"
-                >
-                  <Sparkles className="w-5 h-5" />
-                </button>
-              </div>
+              {geminiLoading ? (
+                <div className="flex items-center justify-center p-4 border-2 border-gray-200 rounded-xl">
+                  <div className="flex items-center gap-2 text-purple-600">
+                    <Sparkles className="w-5 h-5 animate-spin" />
+                    <span className="text-sm font-medium">
+                      Generating with AI...
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="relative">
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    placeholder="Describe your experience..."
+                    rows={4}
+                    className="w-full px-4 py-3 pr-14 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-200 text-gray-700 placeholder-gray-400 resize-none"
+                  />
+                  <button
+                    onClick={handleGeminiClick}
+                    className="absolute right-3 top-3 p-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 transform hover:scale-105 shadow-lg"
+                    title="Generate with Gemini AI"
+                  >
+                    <Sparkles className="w-5 h-5" />
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Photo Upload */}
@@ -232,10 +375,13 @@ function AddEntry() {
             </div>
 
             {/* Submit Button */}
-            <button className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-xl">
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-blue-700 hover:via-purple-700 hover:to-indigo-700 transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
+            >
               Create Entry
             </button>
-          </div>
+          </form>
         </div>
       </div>
 

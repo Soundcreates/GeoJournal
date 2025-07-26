@@ -8,6 +8,6 @@ const cloudinary = require('../utils/cloudinary');
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-imageRouter.post('/', upload.single('image'), authMiddleware, postImage);
+imageRouter.post('/upload', upload.single('image'), authMiddleware, postImage);
 
 module.exports = imageRouter;
