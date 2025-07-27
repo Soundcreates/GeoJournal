@@ -1,3 +1,4 @@
+const dayjs = require('dayjs');
 const mongoose = require('mongoose');
 
 const journalSchema = mongoose.Schema({
@@ -31,8 +32,8 @@ const journalSchema = mongoose.Schema({
     },
     createdAt: {
         type: Date,
-        default: Date.now,
-    },
+        default: () => dayjs().toDate(),
+    }
 
 })
 

@@ -10,6 +10,7 @@ function AddMarkerOnClick({
   setMarkerLocation,
   setLocationName,
   setIsLoading,
+  setCountry,
 }) {
   useMapEvents({
     async click(e) {
@@ -42,6 +43,7 @@ function AddMarkerOnClick({
 
         if (data && data.display_name) {
           setLocationName(data.display_name);
+          setCountry(data.address.country || "Unknown country");
         } else {
           // Fallback to coordinates if no display name
           setLocationName(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
@@ -68,11 +70,13 @@ function AddEntry() {
   const [geminiLoading, setGeminiLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [country, setCountry] = useState("");
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     locationName: locationName,
     coordinates: markerLocation ? [markerLocation.lat, markerLocation.lng] : [],
+    country: country || "",
   });
   const testingCords = {
     lat: 19.2322,
@@ -192,6 +196,7 @@ function AddEntry() {
         imageUrl: imageUrls[0] || "", // Use single imageUrl field
         locationName: formData.locationName,
         coordinates: formData.coordinates,
+        country: formData.country,
       };
 
       await fetchStuff.post("/journals", finalPayLoad, {
@@ -400,6 +405,7 @@ function AddEntry() {
             setMarkerLocation={setMarkerLocation}
             setLocationName={setLocationName}
             setIsLoading={setIsLoading}
+            setCountry={setCountry}
           />
         </MapContainer>
       </div>

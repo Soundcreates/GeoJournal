@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import Loader from "./Loader.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
+import { fetchStuff } from "../service/api.js";
+
 import {
   MapPin,
   Plus,
@@ -30,81 +32,52 @@ export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [likedEntries, setLikedEntries] = useState(new Set([1, 3]));
+  const [countries, setCountries] = useState([]);
+  //state for journal entries
+  const [journalEntries, setJournalEntries] = useState([]);
 
-  // Mock data for journal entries
-  const [journalEntries] = useState([
-    {
-      id: 1,
-      title: "Sunset at Golden Gate Bridge",
-      location: "San Francisco, CA",
-      date: "2024-07-15",
-      aiCaption:
-        "A breathtaking golden hour moment where the iconic bridge meets the endless Pacific horizon.",
-      image:
-        "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=300&fit=crop",
-      coordinates: "37.8199° N, 122.4783° W",
-      mood: "Peaceful",
-      weather: "Clear",
-      likes: 24,
-      comments: 5,
-    },
-    {
-      id: 2,
-      title: "Tokyo Street Food Adventure",
-      location: "Shibuya, Tokyo",
-      date: "2024-07-12",
-      aiCaption:
-        "Neon lights dance on wet pavement as the city's culinary heartbeat pulses through bustling night markets.",
-      image:
-        "https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=400&h=300&fit=crop",
-      coordinates: "35.6762° N, 139.6503° E",
-      mood: "Excited",
-      weather: "Rainy",
-      likes: 42,
-      comments: 12,
-    },
-    {
-      id: 3,
-      title: "Mountain Peak Meditation",
-      location: "Alps, Switzerland",
-      date: "2024-07-08",
-      aiCaption:
-        "Where clouds kiss mountain peaks and silence speaks louder than words in nature's cathedral.",
-      image:
-        "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=400&h=300&fit=crop",
-      coordinates: "46.5197° N, 7.6323° E",
-      mood: "Inspired",
-      weather: "Partly Cloudy",
-      likes: 38,
-      comments: 8,
-    },
-    {
-      id: 4,
-      title: "Cozy Café Corner",
-      location: "Paris, France",
-      date: "2024-07-05",
-      aiCaption:
-        "Steam rises from morning coffee while cobblestone streets whisper tales of timeless romance.",
-      image:
-        "https://images.unsplash.com/photo-1551218808-94e220e084d2?w=400&h=300&fit=crop",
-      coordinates: "48.8566° N, 2.3522° E",
-      mood: "Content",
-      weather: "Overcast",
-      likes: 19,
-      comments: 3,
-    },
-  ]);
+  const handleFetchJournalEntries = async () => {
+    try {
+      const response = await fetchStuff.get("/journals", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      //fetching the countries visited by the user
+      const userCountries = await fetchStuff.get("/auth/me", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      setCountries(userCountries.data.user.countriesVisited || []);
+      console.log(
+        "Fetched countries:",
+        userCountries.data.user.countriesVisited
+      );
+
+      setJournalEntries(response.data.formattedJournals || []);
+      console.log("Fetched journal entries:", response.data);
+    } catch (error) {
+      console.error("Error fetching journal entries:", error);
+    }
+  };
+
+  useEffect(() => {
+    handleFetchJournalEntries();
+  }, []);
 
   const handleNavigateProfile = () => {
     navigate("/profile");
   };
 
-  const [stats] = useState({
+  const stats = {
     totalEntries: journalEntries.length,
-    countriesVisited: 4,
+    countriesVisited: countries.length,
     totalLikes: journalEntries.reduce((sum, entry) => sum + entry.likes, 0),
-    thisMonth: 4,
-  });
+    thisMonth: countries.length,
+  };
 
   const handleLike = (entryId) => {
     setLikedEntries((prev) => {
@@ -118,10 +91,16 @@ export default function Dashboard() {
     });
   };
 
+  if (loading) {
+    return <Loader message="Loading your dashboard..." />;
+  }
+
   const filteredEntries = journalEntries.filter((entry) => {
+    const title = entry?.title || "";
+    const location = entry?.location || "";
     const matchesSearch =
-      entry.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      entry.location.toLowerCase().includes(searchTerm.toLowerCase());
+      title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      location.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter =
       selectedFilter === "all" ||
       (selectedFilter === "recent" &&
@@ -151,7 +130,7 @@ export default function Dashboard() {
     <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
       <div className="relative">
         <img
-          src={entry.image}
+          src={entry.imageUrl}
           alt={entry.title}
           className="w-full h-48 object-cover"
         />
@@ -193,7 +172,7 @@ export default function Dashboard() {
           <span>{entry.location}</span>
           <span className="mx-2">•</span>
           <Calendar className="w-4 h-4 mr-1" />
-          <span>{new Date(entry.date).toLocaleDateString()}</span>
+          <span>{entry.createdAt}</span>
         </div>
 
         <p className="text-gray-700 text-sm leading-relaxed mb-4 line-clamp-2">

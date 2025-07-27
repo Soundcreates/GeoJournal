@@ -40,6 +40,10 @@ const userSchema = mongoose.Schema({
         ref: 'User'
 
     }],
+    countriesVisited: [{
+        type: String,
+
+    }]
 
 });
 
