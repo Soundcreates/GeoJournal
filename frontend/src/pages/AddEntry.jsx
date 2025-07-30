@@ -4,7 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { useMapEvents } from "react-leaflet/hooks";
 import { Upload, Sparkles, MapPin, FileText, Image } from "lucide-react";
 import { fetchStuff } from "../service/api";
-
+import { useNavigate } from "react-router";
 function AddMarkerOnClick({
   markerLocation,
   setMarkerLocation,
@@ -61,6 +61,7 @@ function AddMarkerOnClick({
 }
 
 function AddEntry() {
+  const navigate = useNavigate();
   const position = [19.2183, 72.9781]; //example coordinates for thane india
   const [markerLocation, setMarkerLocation] = useState(null);
   const [locationName, setLocationName] = useState(
@@ -211,6 +212,7 @@ function AddEntry() {
         title: "",
         description: "",
       });
+      navigate("/dashboard"); //redirects to dashboard after successful creation of journal
       setUploadedFiles([]);
     } catch (err) {
       console.error("Error creating journal entry: ", err.message);

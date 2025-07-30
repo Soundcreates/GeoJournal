@@ -111,7 +111,15 @@ const ProfilePage = () => {
               <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
                 <div className="relative group">
                   <div className="w-32 h-32 bg-gradient-to-br from-orange-400 to-pink-500 rounded-full flex items-center justify-center text-4xl font-bold text-white shadow-xl group-hover:scale-105 transition-transform duration-300">
-                    AJ
+                    <img
+                      src={
+                        user.avatar
+                          ? user.avatar
+                          : "https://imgs.search.brave.com/4Zao298wcGdVAOGg3B3_yMa79bBtjbkb6njql8OQKjo/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvNjY2/NTQ1MDYyL3ZlY3Rv/ci9kZWZhdWx0LXBs/YWNlaG9sZGVyLXBy/b2ZpbGUtaWNvbi5q/cGc_cz02MTJ4NjEy/Jnc9MCZrPTIwJmM9/UDMyQm1LaTRCc0I0/Smhob0NhaFRYaHdC/QTBCNkhnSjNBcm9X/SHl1TThOOD0"
+                      }
+                      alt="Profile"
+                      className="w-full h-full rounded-full object-cover"
+                    />
                   </div>
                   <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-400 rounded-full border-4 border-white flex items-center justify-center">
                     <div className="w-3 h-3 bg-green-600 rounded-full animate-pulse"></div>

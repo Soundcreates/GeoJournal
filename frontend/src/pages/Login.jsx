@@ -42,6 +42,16 @@ export default function Login() {
       setError("Login failed");
     }
   };
+
+  const handleGoogleLogin = async () => {
+    console.log("Google login clicked");
+    setLoading(true);
+    try {
+      window.location.href = "http://localhost:5000/api/auth/google/login";
+    } catch (err) {
+      console.error("Google login error: ", err.message);
+    }
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -162,7 +172,10 @@ export default function Login() {
 
           {/* Social Buttons */}
           <div className="grid grid-cols-2 gap-3">
-            <button className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors">
+            <button
+              onClick={handleGoogleLogin}
+              className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
+            >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"

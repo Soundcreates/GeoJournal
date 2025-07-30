@@ -87,6 +87,7 @@ export default function Dashboard() {
       } else {
         newLiked.add(entryId);
       }
+
       return newLiked;
     });
   };
