@@ -69,7 +69,7 @@ export default function Dashboard() {
   }, []);
 
   const handleNavigateProfile = () => {
-    navigate("/profile");
+    navigate(`/profile/${user._id}`);
   };
 
   const stats = {

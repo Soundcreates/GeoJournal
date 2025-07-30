@@ -73,6 +73,26 @@ module.exports.getAllJournals = async (req, res) => {
   }
 }
 
+module.exports.getRecentEntries = async (req, res) => {
+  const userId = req.params.userId;
+
+  if (!userId || userId === "") {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+  try {
+    const recentJournals = await journalModel.find({ userId }).sort({ createdAt: -1 }).limit(3);
+    if (recentJournals.length === 0 || !recentJournals) {
+      return res.status(404).json({ message: "No recent journals found" });
+    }
+    return res.status(200).json({
+      recentJournals
+    })
+
+  } catch (err) {
+    console.error("Error fetching recent entries:", err.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
 module.exports.getJournalById = async (req, res) => {
 
 }

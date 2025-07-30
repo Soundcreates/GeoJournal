@@ -112,6 +112,7 @@ app.get('/api/auth/google/register/callback',
       console.log("Token received: ", token);
       res.redirect(`http://localhost:5173/oauth-success?token=${token}&userInfo=${userInfo}`);
     } catch (err) {
+
       console.error("Error in callback: ", err);
       res.redirect("http://localhost:5173/register?error=callback_error");
     }

@@ -22,7 +22,7 @@ const AppContent = () => {
       <Route path="/" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/profile/:userId" element={<ProfilePage />} />
       <Route path="/add-entry" element={<AddEntry />} />
       <Route path="/oauth-success" element={<OauthSuccess />} />
       <Route path="*" element={<NotFound />} />

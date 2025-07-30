@@ -9,46 +9,42 @@ import {
   Plane,
   Star,
 } from "lucide-react";
+import { useParams } from "react-router";
 import { useAuth } from "../context/AuthContext";
+import { fetchStuff } from "../service/api";
 
 const ProfilePage = () => {
   const { user } = useAuth();
+  const { userId } = useParams();
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [recentEntries, setRecentEntries] = useState([]);
+
+  const handleFetchRecentEntries = async () => {
+    try {
+      const response = await fetchStuff(`/journals/recentJournals/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (response.status === 200) {
+        setRecentEntries(response.data.recentJournals);
+        console.log(
+          "Recent entries fetched successfully: ",
+          response.data.recentJournals
+        );
+      }
+    } catch (err) {
+      console.error("Error fetching recent entries: ", err);
+      setRecentEntries([]);
+    } finally {
+      setIsLoaded(true);
+    }
+  };
 
   useEffect(() => {
-    setIsLoaded(true);
+    handleFetchRecentEntries();
   }, []);
-
-  const recentEntries = [
-    {
-      id: 1,
-      location: "Santorini, Greece",
-      date: "July 15, 2025",
-      preview:
-        "Watching the sunset from Oia was absolutely breathtaking. The way the light painted the white buildings in golden hues...",
-      tags: ["sunset", "photography", "greece", "islands"],
-      image: "🌅",
-    },
-    {
-      id: 2,
-      location: "Barcelona, Spain",
-      date: "July 10, 2025",
-      preview:
-        "Gaudí's architecture continues to amaze me. Spent hours at Park Güell sketching the intricate mosaics and organic forms...",
-      tags: ["architecture", "art", "spain", "sketching"],
-      image: "🏛️",
-    },
-    {
-      id: 3,
-      location: "Reykjavik, Iceland",
-      date: "July 5, 2025",
-      preview:
-        "The Northern Lights finally appeared! After three cloudy nights, the sky erupted in dancing green curtains...",
-      tags: ["northern-lights", "iceland", "nature", "photography"],
-      image: "🌌",
-    },
-  ];
 
   const achievements = [
     {
@@ -177,7 +173,7 @@ const ProfilePage = () => {
               <div className="space-y-4">
                 {recentEntries.map((entry, index) => (
                   <div
-                    key={entry.id}
+                    key={entry._id}
                     className={`bg-white rounded-xl p-6 shadow-lg border border-gray-100 cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
                       selectedEntry === entry.id
                         ? "ring-2 ring-blue-500 scale-[1.02]"
@@ -197,33 +193,22 @@ const ProfilePage = () => {
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <span className="text-3xl">{entry.image}</span>
+                        <span className="text-3xl">{entry.imageUrl}</span>
                         <div>
                           <h3 className="font-bold text-lg text-gray-800">
                             {entry.location}
                           </h3>
                           <p className="text-gray-500 text-sm flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
-                            {entry.date}
+                            {entry.createdAt}
                           </p>
                         </div>
                       </div>
                     </div>
 
                     <p className="text-gray-600 mb-4 leading-relaxed">
-                      {entry.preview}
+                      {entry.title}
                     </p>
-
-                    <div className="flex flex-wrap gap-2">
-                      {entry.tags.map((tag, tagIndex) => (
-                        <span
-                          key={tagIndex}
-                          className="px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs rounded-full font-medium"
-                        >
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
 
                     {selectedEntry === entry.id && (
                       <div className="mt-4 p-4 bg-gray-50 rounded-lg animate-fadeIn">
