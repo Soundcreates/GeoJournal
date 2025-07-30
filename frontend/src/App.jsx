@@ -9,6 +9,7 @@ import Loader from "./pages/Loader";
 import ProfilePage from "./pages/ProfilePage";
 import AddEntry from "./pages/AddEntry";
 import OauthSuccess from "./pages/OauthSuccess";
+import { ErrorProvider } from "./context/errorContext";
 
 const AppContent = () => {
   const { loading } = useAuth();
@@ -33,7 +34,9 @@ const AppContent = () => {
 const App = () => (
   <BrowserRouter>
     <AuthProvider>
-      <AppContent />
+      <ErrorProvider>
+        <AppContent />
+      </ErrorProvider>
     </AuthProvider>
   </BrowserRouter>
 );
