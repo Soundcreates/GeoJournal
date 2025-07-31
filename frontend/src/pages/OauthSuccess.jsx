@@ -15,7 +15,8 @@ export default function OauthSuccess() {
     if (token && userInfoParam) {
       localStorage.setItem("token", token);
       localStorage.setItem("userInfo", userInfoParam);
-      setUser(userInfoParam); // or fetch full profile using token
+      const userInfo = JSON.parse(decodeURIComponent(userInfoParam));
+      setUser(userInfo); // or fetch full profile using token
       navigate("/dashboard");
     } else {
       console.log("No token found in URL");
