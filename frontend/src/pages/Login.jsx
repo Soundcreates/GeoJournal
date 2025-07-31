@@ -45,6 +45,7 @@ export default function Login() {
 
   const handleGoogleLogin = async () => {
     console.log("Google login clicked");
+
     setLoading(true);
     try {
       window.location.href = "http://localhost:5000/api/auth/google/login";

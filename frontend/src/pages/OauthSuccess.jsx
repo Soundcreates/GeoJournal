@@ -21,7 +21,7 @@ export default function OauthSuccess() {
       console.log("No token found in URL");
       navigate("/");
     }
-  }, []);
+  }, [setUser, navigate]);
 
   return <p>Redirecting...</p>;
 }
