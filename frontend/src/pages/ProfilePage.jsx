@@ -29,14 +29,11 @@ const ProfilePage = () => {
 
   const handleFetchRecentEntries = async () => {
     try {
-      const response = await fetchStuff(
-        `/journals/recentJournals/${user._id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const response = await fetchStuff(`/journals/recentJournals/${user.id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       if (response.status === 200) {
         setRecentEntries(response.data.recentJournals);
         console.log(
