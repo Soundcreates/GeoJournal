@@ -2,6 +2,7 @@ const journalModel = require('../models/journalModel');
 const geminiModel = require('../gemini-practice/gemini-start');
 const dayjs = require('dayjs');
 const userModel = require('../models/userModel');
+const mongoose = require('mongoose');
 
 module.exports.createJournal = async (req, res) => {
   const { title, description, imageUrl, locationName, coordinates, country } = req.body;
@@ -79,6 +80,8 @@ module.exports.getRecentEntries = async (req, res) => {
   if (!userId || userId === "") {
     return res.status(400).json({ message: "User ID is required" });
   }
+
+
   try {
     const recentJournals = await journalModel.find({ userId }).sort({ createdAt: -1 }).limit(3);
     if (recentJournals.length === 0 || !recentJournals) {

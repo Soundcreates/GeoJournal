@@ -5,6 +5,7 @@ import { useMapEvents } from "react-leaflet/hooks";
 import { Upload, Sparkles, MapPin, FileText, Image } from "lucide-react";
 import { fetchStuff } from "../service/api";
 import { useNavigate } from "react-router";
+
 function AddMarkerOnClick({
   markerLocation,
   setMarkerLocation,

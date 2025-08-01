@@ -26,6 +26,7 @@ import {
   TrendingUp,
   Globe,
 } from "lucide-react";
+import AddEntryButton from "../components/AddEntryButton.jsx";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -130,7 +131,7 @@ export default function Dashboard() {
           </h2>
           <p className="text-gray-600">Ready to capture your next adventure?</p>
         </div>
-
+        <AddEntryButton />
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
@@ -161,17 +162,6 @@ export default function Dashboard() {
 
         {/* Action Bar */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => navigate("/add-entry")}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl flex items-center space-x-2 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-            >
-              <Plus className="w-5 h-5" />
-              <span>Add New Entry</span>
-              <Zap className="w-4 h-4" />
-            </button>
-          </div>
-
           <div className="flex items-center space-x-4">
             {/* Filter */}
             <select
