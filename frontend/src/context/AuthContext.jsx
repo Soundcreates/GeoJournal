@@ -23,7 +23,24 @@ export const AuthProvider = ({ children }) => {
           withCredentials: true,
         });
 
-        setUser(response.data.user);
+        if (response.status === 200) {
+          const userData = {
+            id: response.data.user._id || response.data.user.id,
+            username: response.data.user.username,
+            email: response.data.user.email,
+            avatar: response.data.user.avatar,
+            firstName: response.data.user.firstNmme,
+            currentLocation: response.data.user.currentLocation || {
+              city: "Unknown City",
+              country: "Unknown Country",
+            }
+          }
+          setUser(userData);
+        } else {
+          localStorage.removeItem("token");
+        }
+
+
       } catch (err) {
         console.log(err.message);
         // Clear invalid token

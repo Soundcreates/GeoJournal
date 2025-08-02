@@ -9,7 +9,7 @@ const userSchema = mongoose.Schema({
     avatar: String,
     username: {
         type: String,
-        required: () => {
+        required: function () {
             return !this.googleId;
         }
     },
@@ -19,7 +19,7 @@ const userSchema = mongoose.Schema({
     },
     password: {
         type: String,
-        required: () => {
+        required: function () {
             return !this.googleId;
         }
     },
@@ -49,7 +49,17 @@ const userSchema = mongoose.Schema({
     countriesVisited: [{
         type: String,
 
-    }]
+    }],
+    currentLocation: {
+        city: {
+            type: String,
+            default: "Unknown City",
+        },
+        country: {
+            type: String,
+            default: "Unknown Country",
+        }
+    }
 
 });
 

@@ -14,22 +14,35 @@ import { useAuth } from "../context/AuthContext";
 import { fetchStuff } from "../service/api";
 import useGetLocation from "../hooks/useGetLocation";
 import Loader from "./Loader";
+import ViewEntries from "../components/ViewEntries";
+
 
 const ProfilePage = () => {
-  const { user } = useAuth();
+  const { user, loading: userLoading } = useAuth();
   const { userId } = useParams();
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [recentEntries, setRecentEntries] = useState([]);
-  const {
-    locationName,
-    error: locationError,
-    loading: locationLoading,
-  } = useGetLocation();
+  const [openTravelMap, setOpenTravelMap] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState(() => {
+    try {
+      const storedLocation = localStorage.getItem("userLocation");
+      if (storedLocation) {
+        const parsed = JSON.parse(storedLocation);
+        return {
+          city: parsed.city || "Unknown City",
+          country: parsed.country || "Unknown Country"
+        };
+      }
+    } catch (error) {
+      console.error("Error parsing stored location:", error);
+    }
+  });
 
+  const { loading: locationLoading } = useGetLocation();
   const handleFetchRecentEntries = async () => {
     try {
-      const response = await fetchStuff(`/journals/recentJournals/${user.id}`, {
+      const response = await fetchStuff(`/journals/recentJournals/${user.id}`, { //use 'user.id' everywhere
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -50,16 +63,21 @@ const ProfilePage = () => {
   };
 
   useEffect(() => {
-    handleFetchRecentEntries();
-    console.log("Location Hook Data: ", {
-      displayName: locationName?.displayName,
-      city: locationName?.city,
-      country: locationName?.country,
-      coordinates: locationName?.coordinates,
-      error: locationError,
-      loading: locationLoading,
-    });
-  }, [locationName, locationLoading, locationError]);
+    if (user && user.id && !userLoading) {
+      handleFetchRecentEntries();
+    }
+    console.log("User current location is: ", currentLocation.city, currentLocation.country);
+  }, [user, userLoading]); //will render based on both of these dependencies
+
+  if (userLoading) {
+    return <Loader message="Loading user data..." />;
+  }
+
+  if (!user) {
+    return <Loader message="User not found. Redirecting..." />;
+  }
+
+
 
   const achievements = [
     {
@@ -113,9 +131,8 @@ const ProfilePage = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4">
         <div
-          className={`max-w-6xl mx-auto transition-all duration-1000 ${
-            isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
+          className={`max-w-6xl mx-auto transition-all duration-1000 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            }`}
         >
           {/* Profile Header */}
           <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl mb-8 overflow-hidden">
@@ -151,8 +168,8 @@ const ProfilePage = () => {
                       </p>
                       <p className="flex items-center justify-center md:justify-start gap-2">
                         <MapPin className="w-4 h-4" />
-                        Currently in: {locationName.city},{" "}
-                        {locationName.country}
+                        Currently in: {currentLocation.city},{" "}
+                        {currentLocation.country}
                       </p>
                       <p className="flex items-center justify-center md:justify-start gap-2">
                         <Plane className="w-4 h-4" />
@@ -178,6 +195,11 @@ const ProfilePage = () => {
 
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Recent Entries */}
+            {openTravelMap && (
+              <div className="w-full h-full flex justify-center items-center bg-white/90 backdrop-blur-md">
+                <ViewEntries />
+              </div>
+            )}
             <div className="lg:col-span-2">
               <div className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-xl p-6">
                 <div className="flex items-center gap-3 mb-6">
@@ -193,14 +215,13 @@ const ProfilePage = () => {
                   {recentEntries.map((entry, index) => (
                     <div
                       key={entry._id}
-                      className={`bg-white rounded-xl p-6 shadow-lg border border-gray-100 cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
-                        selectedEntry === entry.id
-                          ? "ring-2 ring-blue-500 scale-[1.02]"
-                          : ""
-                      }`}
+                      className={`bg-white rounded-xl p-6 shadow-lg border border-gray-100 cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${selectedEntry === entry.id
+                        ? "ring-2 ring-blue-500 scale-[1.02]"
+                        : ""
+                        }`}
                       onClick={() =>
                         setSelectedEntry(
-                          selectedEntry === entry.id ? null : entry.id
+                          selectedEntry === entry._id ? null : entry._id
                         )
                       }
                       style={{
@@ -212,7 +233,8 @@ const ProfilePage = () => {
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <span className="text-3xl">{entry.imageUrl}</span>
+
+
                           <div>
                             <h3 className="font-bold text-lg text-gray-800">
                               {entry.location}
@@ -256,8 +278,12 @@ const ProfilePage = () => {
                   </h2>
                 </div>
 
-                <div className="bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 rounded-xl h-48 flex items-center justify-center text-white text-center p-6">
-                  <div>
+                <div onClick={() => {
+                  console.log("OpenTravelMap is: ", openTravelMap);
+                  setOpenTravelMap(true)
+                }}
+                  className="bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 rounded-xl h-48 flex items-center justify-center text-white text-center p-6">
+                  <div className="cursor-pointer">
                     <div className="text-4xl mb-2">🗺️</div>
                     <p className="font-medium">Interactive World Map</p>
                     <p className="text-sm opacity-90 mt-1">

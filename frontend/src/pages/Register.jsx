@@ -3,7 +3,10 @@ import { useNavigate, Link } from "react-router";
 import { MapPin, Eye, EyeOff, Mail, Lock, User, Check, X } from "lucide-react";
 import { fetchStuff } from "../service/api";
 import { useAuth } from "../context/AuthContext";
+import useGetLocation from "../hooks/useGetLocation";
+
 export default function Register() {
+  const { locationName, loading: locationLoading } = useGetLocation();
   const { loading, setLoading, setUser, setFirstName } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -12,6 +15,10 @@ export default function Register() {
     email: "",
     password: "",
     confirmPassword: "",
+    currentLocation: {
+      city: null,
+      country: null
+    }
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -37,6 +44,9 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const { city, country } = locationName;
+    formData.currentLocation.city = city || "Unknown City";
+    formData.currentLocation.country = country || "Unknown Country";
 
     if (!isPasswordValid || !passwordsMatch || !agreedToTerms) {
       return;
@@ -47,23 +57,41 @@ export default function Register() {
     }
 
     setLoading(true);
+    try {
 
-    //call backend API to register user
-    const response = await fetchStuff.post("/auth/register", {
-      username: formData.firstName + " " + formData.lastName,
-      email: formData.email,
-      password: formData.password,
-      firstName: formData.firstName,
-    });
-    if (response.status === 201) {
-      setUser(response.data.user);
-      navigate("/dashboard");
-      setError(null);
+      let locationData = locationName;
+
+      if (locationLoading) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        locationData = locationName || { city: "Unknown City", country: "Unknown Country" };
+      }
+      //call backend API to register user
+      const response = await fetchStuff.post("/auth/register", {
+        username: formData.firstName + " " + formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        firstName: formData.firstName,
+        currentLocation: {
+          city: formData.currentLocation.city || "Unknown City",
+          country: formData.currentLocation.country || "Unknown Country",
+        }
+      });
+      if (response.status === 201) {
+        setUser(response.data.user);
+        navigate("/dashboard");
+        setError(null);
+        setLoading(false);
+        const token = response.data.token;
+        localStorage.setItem("token", token);
+
+      }
+    } catch (err) {
+      console.error("Registration failed:", err.message);
+      setError("Registration failed. Please try again.");
+    } finally {
       setLoading(false);
-      const token = response.data.token;
-      localStorage.setItem("token", token);
-      r;
     }
+
   };
   const handleGoogleRegister = async () => {
     console.log("Google register clicked");
@@ -251,11 +279,10 @@ export default function Register() {
                   onChange={(e) =>
                     handleInputChange("confirmPassword", e.target.value)
                   }
-                  className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-                    formData.confirmPassword && !passwordsMatch
-                      ? "border-red-300 bg-red-50"
-                      : "border-gray-300"
-                  }`}
+                  className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${formData.confirmPassword && !passwordsMatch
+                    ? "border-red-300 bg-red-50"
+                    : "border-gray-300"
+                    }`}
                   placeholder="Confirm your password"
                   required
                 />

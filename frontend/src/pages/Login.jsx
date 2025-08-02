@@ -3,6 +3,9 @@ import { useNavigate, Link } from "react-router";
 import { MapPin, Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { fetchStuff } from "../service/api";
 import { useAuth } from "../context/AuthContext";
+import useGetLocation from "../hooks/useGetLocation";
+import Loader from "../pages/Loader.jsx";
+
 
 export default function Login() {
   const { loading, setLoading, setUser } = useAuth();
@@ -11,7 +14,13 @@ export default function Login() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    currentLocation: {
+      city: null,
+      country: null,
+    }
   });
+  const { locationName } = useGetLocation();
+
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -19,17 +28,29 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
 
+    const { city, country } = locationName;
+    formData.currentLocation.city = city;
+    formData.currentLocation.country = country;
+    console.log("Form Data:", formData);
+
     try {
+
+      let locationData = locationName;
+      if (locationLoading) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        locationData = locationName || { city: "Unknown City", country: "Unknown Country" };
+      }
       const response = await fetchStuff.post("/auth/login", {
         email: formData.email,
         password: formData.password,
+        currentLocation: formData.currentLocation,
       });
       setLoading(true);
       setError(response.data.message || "");
       if (response.status === 200) {
         localStorage.setItem("token", response.data.token);
         setUser(response.data.user);
-        navigate("/dashboard");
+        navigate('/dashboard');
         setLoading(false);
       } else {
         navigate("/");
@@ -40,6 +61,8 @@ export default function Login() {
     } catch (err) {
       console.log(err.message);
       setError("Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 

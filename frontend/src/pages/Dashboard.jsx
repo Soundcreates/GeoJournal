@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import AddEntryButton from "../components/AddEntryButton.jsx";
 
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const { loading, user } = useAuth();
@@ -73,7 +74,7 @@ export default function Dashboard() {
   }, []);
 
   const handleNavigateProfile = () => {
-    navigate(`/profile/${user._id}`);
+    navigate(`/profile/${user.id}`);
   };
 
   const stats = {
@@ -110,7 +111,7 @@ export default function Dashboard() {
       selectedFilter === "all" ||
       (selectedFilter === "recent" &&
         new Date(entry.date) >
-          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)) ||
+        new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)) ||
       (selectedFilter === "popular" && entry.likes > 30);
     return matchesSearch && matchesFilter;
   });
@@ -178,21 +179,19 @@ export default function Dashboard() {
             <div className="flex items-center bg-gray-100 rounded-xl p-1">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`p-2 rounded-lg transition-colors ${
-                  viewMode === "grid"
-                    ? "bg-white text-blue-600 shadow-sm"
-                    : "text-gray-600"
-                }`}
+                className={`p-2 rounded-lg transition-colors ${viewMode === "grid"
+                  ? "bg-white text-blue-600 shadow-sm"
+                  : "text-gray-600"
+                  }`}
               >
                 <Grid3X3 className="w-5 h-5" />
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-2 rounded-lg transition-colors ${
-                  viewMode === "list"
-                    ? "bg-white text-blue-600 shadow-sm"
-                    : "text-gray-600"
-                }`}
+                className={`p-2 rounded-lg transition-colors ${viewMode === "list"
+                  ? "bg-white text-blue-600 shadow-sm"
+                  : "text-gray-600"
+                  }`}
               >
                 <List className="w-5 h-5" />
               </button>
@@ -202,11 +201,10 @@ export default function Dashboard() {
 
         {/* Journal Entries */}
         <div
-          className={`grid gap-6 ${
-            viewMode === "grid"
-              ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-              : "grid-cols-1"
-          }`}
+          className={`grid gap-6 ${viewMode === "grid"
+            ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+            : "grid-cols-1"
+            }`}
         >
           {filteredEntries.map((entry) => (
             <JournalCard
