@@ -15,7 +15,7 @@ import { fetchStuff } from "../service/api";
 import useGetLocation from "../hooks/useGetLocation";
 import Loader from "./Loader";
 import ViewEntries from "../components/ViewEntries";
-
+import Logout from "../components/Logout";
 
 const ProfilePage = () => {
   const { user, loading: userLoading } = useAuth();
@@ -130,6 +130,14 @@ const ProfilePage = () => {
   } else {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4">
+        {openTravelMap && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+            <div className="relative w-[90%] max-w-5xl h-[80%] bg-white rounded-3xl shadow-2xl overflow-hidden ">
+              <ViewEntries setOpenTravelMap={setOpenTravelMap} />
+
+            </div>
+          </div>
+        )}
         <div
           className={`max-w-6xl mx-auto transition-all duration-1000 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
@@ -152,9 +160,14 @@ const ProfilePage = () => {
                         className="w-full h-full rounded-full object-cover"
                       />
                     </div>
+
+
                     <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-400 rounded-full border-4 border-white flex items-center justify-center">
                       <div className="w-3 h-3 bg-green-600 rounded-full animate-pulse"></div>
                     </div>
+                  </div>
+                  <div className="mt-2">
+                    <Logout />
                   </div>
 
                   <div className="text-center md:text-left text-white flex-1">
@@ -195,11 +208,7 @@ const ProfilePage = () => {
 
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Recent Entries */}
-            {openTravelMap && (
-              <div className="w-full h-full flex justify-center items-center bg-white/90 backdrop-blur-md">
-                <ViewEntries />
-              </div>
-            )}
+
             <div className="lg:col-span-2">
               <div className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-xl p-6">
                 <div className="flex items-center gap-3 mb-6">
@@ -280,7 +289,7 @@ const ProfilePage = () => {
 
                 <div onClick={() => {
                   console.log("OpenTravelMap is: ", openTravelMap);
-                  setOpenTravelMap(true)
+                  setOpenTravelMap(prev => !prev);
                 }}
                   className="bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 rounded-xl h-48 flex items-center justify-center text-white text-center p-6">
                   <div className="cursor-pointer">
