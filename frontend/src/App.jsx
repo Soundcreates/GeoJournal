@@ -10,7 +10,6 @@ import ProfilePage from "./pages/ProfilePage";
 import AddEntry from "./pages/AddEntry";
 import OauthSuccess from "./pages/OauthSuccess";
 import { ErrorProvider } from "./context/errorContext";
-import ViewJournal from "./components/ViewJournal";
 
 const AppContent = () => {
   const { loading } = useAuth();
@@ -27,7 +26,7 @@ const AppContent = () => {
       <Route path="/profile/:userId" element={<ProfilePage />} />
       <Route path="/add-entry" element={<AddEntry />} />
       <Route path="/oauth-success" element={<OauthSuccess />} />
-      <Route path="/view-journal/:journalId" element={<ViewJournal />} />
+
 
       <Route path="*" element={<NotFound />} />
     </Routes>

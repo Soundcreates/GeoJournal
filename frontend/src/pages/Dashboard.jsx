@@ -27,7 +27,7 @@ import {
   Globe,
 } from "lucide-react";
 import AddEntryButton from "../components/AddEntryButton.jsx";
-
+import ViewJournal from "../components/ViewJournal.jsx";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -37,7 +37,10 @@ export default function Dashboard() {
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [likedEntries, setLikedEntries] = useState(new Set([1, 3]));
   const [countries, setCountries] = useState([]);
-
+  const [viewJournal, setViewJournal] = useState({
+    mode: false,
+    entry_id: "",
+  });
   //state for journal entries
   const [journalEntries, setJournalEntries] = useState([]);
 
@@ -116,12 +119,18 @@ export default function Dashboard() {
     return matchesSearch && matchesFilter;
   });
 
-  const handleNavigateViewJournal = (entry) => () => {
-    navigate(`/view-journal/${entry.id}`);
-  }
+
 
   return (
     <div className="min-h-screen bg-white">
+      {viewJournal.mode && (
+        <div className="fixed inset-0 w-[70%] h-[60%] bg-white bg-opacity-50 z-50 flex items-center justify-center">
+          <ViewJournal
+            entryId={viewJournal.entry_id}
+          />
+        </div>
+
+      )}
       {/* Header */}
       <Header
         searchTerm={searchTerm}
@@ -211,7 +220,10 @@ export default function Dashboard() {
             }`}
         >
           {filteredEntries.map((entry) => (
-            <div onClick={handleNavigateViewJournal(entry)}>
+            <div onClick={() => setViewJournal({
+              mode: true,
+              entry_id: entry.id,
+            })}>
               <JournalCard
                 key={entry.id}
                 entry={entry}

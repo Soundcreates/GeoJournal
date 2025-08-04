@@ -97,7 +97,27 @@ module.exports.getRecentEntries = async (req, res) => {
   }
 }
 module.exports.getJournalById = async (req, res) => {
+  const journalId = req.params.id;
 
+  try {
+    if (!journalId || journalId === "")
+      return res.status(400).json({ message: "Journal ID is required" });
+
+    const journal = await journalModel.findById(journalId);
+    if (!journal) return res.status(404).json({ message: "Journal not found" });
+    return res.status(200).json({
+      journalReq: {
+        title: journal.title,
+        description: journal.description,
+        imageUrl: journal.imageUrl,
+        aiCaption: journal.aiCaption,
+      }
+    });
+
+  } catch (err) {
+    console.error("Error fetching journal by ID:", err.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
 }
 
 module.exports.updateJournal = async (req, res) => {
