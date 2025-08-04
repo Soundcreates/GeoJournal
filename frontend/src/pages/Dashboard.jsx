@@ -124,12 +124,17 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-white">
       {viewJournal.mode && (
-        <div className="fixed inset-0 w-[70%] h-[60%] bg-white bg-opacity-50 z-50 flex items-center justify-center">
-          <ViewJournal
-            entryId={viewJournal.entry_id}
-          />
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm"
+          onClick={() => setViewJournal({ mode: false, entry_id: "" })}
+        >
+          <div
+            className="relative w-[90%] max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl shadow-lg bg-white p-6"
+            onClick={(e) => e.stopPropagation()} // Prevent closing on modal click
+          >
+            <ViewJournal entryId={viewJournal.entry_id} />
+          </div>
         </div>
-
       )}
       {/* Header */}
       <Header
