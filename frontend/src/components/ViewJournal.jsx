@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Heart, MessageCircle } from 'lucide-react'; // Icons for like & comment
+import { Heart, MessageCircle } from 'lucide-react';
 import { fetchStuff } from '../service/api';
 
 function ViewJournal({ entryId }) {
@@ -19,14 +19,12 @@ function ViewJournal({ entryId }) {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         }
-      })
+      });
       setViewComments(response.data.comments);
-      console.log("Fetched comments: ", response.data.comments);
     } catch (err) {
       console.error("Error fetching comments:", err);
     }
-  }
-
+  };
 
   useEffect(() => {
     fetchComments();
@@ -39,7 +37,6 @@ function ViewJournal({ entryId }) {
           },
         });
         const data = response.data.journalReq;
-        console.log("Journal data:", data);
         setJournal({
           title: data.title,
           description: data.description,
@@ -52,7 +49,6 @@ function ViewJournal({ entryId }) {
     };
 
     handleFetchJournalById();
-
   }, [entryId]);
 
   const handleSendComment = async () => {
@@ -74,68 +70,81 @@ function ViewJournal({ entryId }) {
     } catch (err) {
       console.error(err.message);
     }
-  }
+  };
+
   return (
-    <div className="w-full min-h-screen flex flex-col md:flex-row bg-gray-50 p-6">
-      {/* Left Panel: Text Info */}
+    <div className="w-full min-h-screen flex flex-col md:flex-row bg-white text-black p-8 font-sans">
+      {/* Left Panel */}
       <div className="md:w-1/2 w-full px-4">
-        <h1 className="text-3xl font-bold mb-2">{journal.title}</h1>
-        <p className="text-gray-700 mb-4">{journal.description}</p>
+        <h1 className="text-4xl font-extrabold mb-4 tracking-tight">{journal.title}</h1>
+        <p className="text-gray-700 leading-relaxed mb-6">{journal.description}</p>
         {journal.aiCaption && (
-          <p className="italic text-sm text-blue-600 mb-6">AI Caption: {journal.aiCaption}</p>
+          <p className="italic text-sm text-gray-500 mb-8 border-l-4 border-black/10 pl-3">
+            {journal.aiCaption}
+          </p>
         )}
 
         {/* Like & Comment Buttons */}
-        <div className="flex items-center gap-6 mb-4">
-          <button className="flex items-center gap-2 text-red-500 hover:text-red-600 transition">
+        <div className="flex items-center gap-6 mb-6">
+          <button className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-full shadow hover:bg-gray-800 transition">
             <Heart size={20} /> <span>Like</span>
           </button>
-          <button onClick={() => setOpenComment(prev => !prev)} className="flex items-center gap-2 text-blue-500 hover:text-blue-600 transition">
-
-
+          <button
+            onClick={() => setOpenComment(prev => !prev)}
+            className="flex items-center gap-2 border border-black px-4 py-2 rounded-full hover:bg-black hover:text-white transition"
+          >
             <MessageCircle size={20} /> <span>Comment</span>
-
-
           </button>
         </div>
 
-        {/* Static Comment Input */}
+        {/* Comment Input */}
         {openComment && (
-          <div className="border rounded-lg p-3 bg-white shadow-sm">
+          <div className="border border-black/10 rounded-xl p-4 bg-gray-50 shadow-sm">
             <textarea
               placeholder="Write a comment..."
-              className="w-full resize-none outline-none border-none"
+              className="w-full resize-none outline-none bg-transparent text-black placeholder-gray-500"
               rows="3"
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
             ></textarea>
-            <button className="mt-2 bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600" onClick={handleSendComment}>
+            <button
+              className="mt-3 bg-black text-white px-4 py-1 rounded-full hover:bg-gray-800 transition"
+              onClick={handleSendComment}
+            >
               Post
             </button>
           </div>
         )}
-
       </div>
 
-      {/* Right Panel: Image */}
-      <div className="md:w-1/2 w-full px-4 mt-8 md:mt-0 flex flex-col justify-center items-center">
+      {/* Right Panel */}
+      <div className="md:w-1/2 w-full px-4 mt-8 md:mt-0 flex flex-col items-center">
         {journal.imageUrl ? (
           <img
             src={journal.imageUrl}
             alt="Journal"
-            className="rounded-lg shadow-lg w-full max-w-lg object-cover"
+            className="rounded-2xl shadow-lg w-full max-w-lg object-cover border border-black/10"
           />
         ) : (
           <div className="text-gray-400 italic">No image available</div>
         )}
-        <div>
-          <h2 className="text-2xl font-bold mb-4">Comments</h2>
-          {viewComments.map(comment => (
-            <div key={comment.id} className="border-b py-2">
-              <p className="font-semibold">{comment.userId.name}</p>
-              <p>{comment.commentText}</p>
+        <div className="mt-8 w-full">
+          <h2 className="text-2xl font-semibold mb-6">Comments</h2>
+          {viewComments.length > 0 ? (
+            <div className="space-y-4">
+              {viewComments.map((comment) => (
+                <div
+                  key={comment.id}
+                  className="bg-gray-100 rounded-xl p-4 shadow-sm border border-black/5"
+                >
+                  <p className="font-semibold mb-1">{comment.userId.name}</p>
+                  <p className="text-gray-700 leading-snug">{comment.commentText}</p>
+                </div>
+              ))}
             </div>
-          ))}
+          ) : (
+            <p className="text-gray-500 italic">No comments yet.</p>
+          )}
         </div>
       </div>
     </div>
