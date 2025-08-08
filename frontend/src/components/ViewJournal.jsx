@@ -29,7 +29,7 @@ function ViewJournal({ entryId }) {
 
 
   useEffect(() => {
-
+    fetchComments();
 
     const handleFetchJournalById = async () => {
       try {
@@ -52,7 +52,7 @@ function ViewJournal({ entryId }) {
     };
 
     handleFetchJournalById();
-    fetchComments();
+
   }, [entryId]);
 
   const handleSendComment = async () => {
