@@ -9,8 +9,28 @@ function ViewJournal({ entryId }) {
     imageUrl: "",
     aiCaption: "",
   });
+  const [openComment, setOpenComment] = useState(false);
+  const [viewComments, setViewComments] = useState([]);
+  const [commentText, setCommentText] = useState("");
+
+  const fetchComments = async () => {
+    try {
+      const response = await fetchStuff.get(`/comments/${entryId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }
+      })
+      setViewComments(response.data.comments);
+      console.log("Fetched comments: ", response.data.comments);
+    } catch (err) {
+      console.error("Error fetching comments:", err);
+    }
+  }
+
 
   useEffect(() => {
+
+
     const handleFetchJournalById = async () => {
       try {
         const response = await fetchStuff.get(`/journals/${entryId}`, {
@@ -32,8 +52,29 @@ function ViewJournal({ entryId }) {
     };
 
     handleFetchJournalById();
+    fetchComments();
   }, [entryId]);
 
+  const handleSendComment = async () => {
+    try {
+      const response = await fetchStuff.post('/comments', {
+        journalId: entryId,
+        commentText,
+      }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }
+      });
+      setCommentText("");
+      fetchComments();
+
+      if (response.status === 200) {
+        console.log("Comment added successfully");
+      }
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
   return (
     <div className="w-full min-h-screen flex flex-col md:flex-row bg-gray-50 p-6">
       {/* Left Panel: Text Info */}
@@ -49,27 +90,35 @@ function ViewJournal({ entryId }) {
           <button className="flex items-center gap-2 text-red-500 hover:text-red-600 transition">
             <Heart size={20} /> <span>Like</span>
           </button>
-          <button className="flex items-center gap-2 text-blue-500 hover:text-blue-600 transition">
+          <button onClick={() => setOpenComment(prev => !prev)} className="flex items-center gap-2 text-blue-500 hover:text-blue-600 transition">
+
+
             <MessageCircle size={20} /> <span>Comment</span>
+
+
           </button>
         </div>
 
         {/* Static Comment Input */}
-        <div className="border rounded-lg p-3 bg-white shadow-sm">
-          <textarea
-            placeholder="Write a comment..."
-            className="w-full resize-none outline-none border-none"
-            rows="3"
-            disabled
-          ></textarea>
-          <button className="mt-2 bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600" disabled>
-            Post
-          </button>
-        </div>
+        {openComment && (
+          <div className="border rounded-lg p-3 bg-white shadow-sm">
+            <textarea
+              placeholder="Write a comment..."
+              className="w-full resize-none outline-none border-none"
+              rows="3"
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+            ></textarea>
+            <button className="mt-2 bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600" onClick={handleSendComment}>
+              Post
+            </button>
+          </div>
+        )}
+
       </div>
 
       {/* Right Panel: Image */}
-      <div className="md:w-1/2 w-full px-4 mt-8 md:mt-0 flex justify-center items-center">
+      <div className="md:w-1/2 w-full px-4 mt-8 md:mt-0 flex flex-col justify-center items-center">
         {journal.imageUrl ? (
           <img
             src={journal.imageUrl}
@@ -79,6 +128,15 @@ function ViewJournal({ entryId }) {
         ) : (
           <div className="text-gray-400 italic">No image available</div>
         )}
+        <div>
+          <h2 className="text-2xl font-bold mb-4">Comments</h2>
+          {viewComments.map(comment => (
+            <div key={comment.id} className="border-b py-2">
+              <p className="font-semibold">{comment.userId.name}</p>
+              <p>{comment.commentText}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
