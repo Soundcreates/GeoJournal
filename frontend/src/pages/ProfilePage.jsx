@@ -14,8 +14,8 @@ import { useAuth } from "../context/AuthContext";
 import { fetchStuff } from "../service/api";
 import useGetLocation from "../hooks/useGetLocation";
 import Loader from "./Loader";
-import ViewEntries from "../components/ViewEntries";
-import Logout from "../components/Logout";
+import ViewEntries from "../comps/ViewEntries";
+import Logout from "../comps/Logout";
 
 const ProfilePage = () => {
   const { user, loading: userLoading } = useAuth();

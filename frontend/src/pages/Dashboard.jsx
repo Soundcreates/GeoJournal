@@ -3,9 +3,9 @@ import { useNavigate } from "react-router";
 import Loader from "./Loader.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import { fetchStuff } from "../service/api.js";
-import JournalCard from "../components/JournalCard.jsx";
-import StatCard from "../components/StatCard.jsx";
-import Header from "../components/Header.jsx";
+import JournalCard from "../comps/JournalCard.jsx";
+import StatCard from "../comps/StatCard.jsx";
+import Header from "../comps/Header.jsx";
 import {
   MapPin,
   Plus,
@@ -26,8 +26,8 @@ import {
   TrendingUp,
   Globe,
 } from "lucide-react";
-import AddEntryButton from "../components/AddEntryButton.jsx";
-import ViewJournal from "../components/ViewJournal.jsx";
+import AddEntryButton from "../comps/AddEntryButton.jsx";
+import ViewJournal from "../comps/ViewJournal.jsx";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -164,6 +164,7 @@ export default function Dashboard() {
             label="Countries Visited"
             value={stats.countriesVisited}
             color="bg-green-500"
+            status={true}
           />
           <StatCard
             icon={Heart}
