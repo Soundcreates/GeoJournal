@@ -164,7 +164,7 @@ export default function Dashboard() {
             label="Countries Visited"
             value={stats.countriesVisited}
             color="bg-green-500"
-            status={true}
+            status="country"
           />
           <StatCard
             icon={Heart}
