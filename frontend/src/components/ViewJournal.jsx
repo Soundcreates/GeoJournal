@@ -21,6 +21,7 @@ function ViewJournal({ entryId }) {
         }
       });
       setViewComments(response.data.comments);
+      console.log("Fetched comments: ", response.data.comments.map(comment => comment.name));
     } catch (err) {
       console.error("Error fetching comments:", err);
     }
@@ -137,8 +138,21 @@ function ViewJournal({ entryId }) {
                   key={comment.id}
                   className="bg-gray-100 rounded-xl p-4 shadow-sm border border-black/5"
                 >
-                  <p className="font-semibold mb-1">{comment.userId.name}</p>
+                  <div className="rounded-full flex gap-2 w-[32px] h-[32px]">
+                    <img src={comment.userId.avatar} alt={comment.userId.firstName} className="rounded-full w-full h-full object-cover" />
+                    <p className="font-semibold ">{comment.userId.firstName}</p>
+                  </div>
+
                   <p className="text-gray-700 leading-snug">{comment.commentText}</p>
+                  <p>{new Date(comment.createdAt).toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    second: 'numeric',
+                    hour12: true
+                  })}</p>
                 </div>
               ))}
             </div>

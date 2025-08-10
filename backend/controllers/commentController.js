@@ -38,9 +38,9 @@ module.exports.getJournalComments = async (req, res) => {
     if (!journal) {
       return res.status(404).json({ message: "Journal not found" });
     }
-    const comments = await commentModel.find({ journalEntryId: journalId }).populate('userId', 'name profilePicture');
+    const comments = await commentModel.find({ journalEntryId: journalId }).populate('userId', 'firstName avatar');
     if (!comments || comments.length === 0) return res.status(404).json({ message: "No comments found for this journal" });
-
+    console.log(comments);
     return res.status(200).json({ message: "Comments retrieved successfully", comments });
 
   } catch (err) {
