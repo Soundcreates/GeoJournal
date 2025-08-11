@@ -44,7 +44,9 @@ function AddMarkerOnClick({
 
         if (data && data.display_name) {
           setLocationName(data.display_name);
+
           setCountry(data.address.country || "Unknown country");
+
         } else {
           // Fallback to coordinates if no display name
           setLocationName(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
@@ -78,7 +80,7 @@ function AddEntry() {
     description: "",
     locationName: locationName,
     coordinates: markerLocation ? [markerLocation.lat, markerLocation.lng] : [],
-    country: country || "",
+    country: country
   });
   const testingCords = {
     lat: 19.2322,
@@ -198,7 +200,7 @@ function AddEntry() {
         imageUrl: imageUrls[0] || "", // Use single imageUrl field
         locationName: formData.locationName,
         coordinates: formData.coordinates,
-        country: formData.country,
+        country: country, //didnt use formData.country because the country in formdata wasnt updated
       };
 
       await fetchStuff.post("/journals", finalPayLoad, {
@@ -207,7 +209,7 @@ function AddEntry() {
         },
       });
       console.log("Journal entry created successfully");
-
+      console.log(country);
       // Reset form after successful submission
       setFormData({
         title: "",
@@ -328,11 +330,10 @@ function AddEntry() {
 
               {/* Drag and Drop Area */}
               <div
-                className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200 ${
-                  dragActive
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-gray-300 hover:border-gray-400 bg-gray-50"
-                }`}
+                className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200 ${dragActive
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-300 hover:border-gray-400 bg-gray-50"
+                  }`}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
                 onDragOver={handleDrag}

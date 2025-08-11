@@ -18,7 +18,7 @@ import ViewEntries from "../comps/ViewEntries";
 import Logout from "../comps/Logout";
 
 const ProfilePage = () => {
-  const { user, loading: userLoading } = useAuth();
+  const { user, loading: userLoading, getUser } = useAuth();
   const { userId } = useParams();
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -38,6 +38,10 @@ const ProfilePage = () => {
       console.error("Error parsing stored location:", error);
     }
   });
+
+  useEffect(() => {
+    getUser();
+  }, [])
 
   const { loading: locationLoading } = useGetLocation();
   const handleFetchRecentEntries = async () => {
@@ -118,11 +122,12 @@ const ProfilePage = () => {
     },
   ];
 
+
   const stats = [
-    { number: "23", label: "Countries" },
-    { number: "156", label: "Entries" },
-    { number: "47.2K", label: "Miles" },
-    { number: "892", label: "Photos" },
+    { number: (user?.countriesVisited ? user?.countriesVisited : 0), label: "Countries" },
+    { number: (user?.journalEntries || 0), label: "Entries" },
+    { number: (user?.milesTraveled || 0), label: "Miles" },
+    { number: (user?.photosTaken || 0), label: "Photos" },
   ];
 
   if (locationLoading) {

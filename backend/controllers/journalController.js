@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 
 module.exports.createJournal = async (req, res) => {
   const { title, description, imageUrl, locationName, coordinates, country } = req.body;
-  console.log("create journal endpoint hit!");
+  console.log("The journal's country is: ", country.toString());
   const userId = req.user.id;
   try {
 
@@ -17,7 +17,11 @@ module.exports.createJournal = async (req, res) => {
     if (!title || !locationName || !coordinates) {
       return res.status(400).json({ message: "Title, location name, and coordinates are required" });
     }
-    user.countriesVisited.push(country);
+    const alreadyVisited = user.countriesVisited.includes(country);
+    if (!alreadyVisited) {
+      user.countriesVisited.push(country);
+    }
+
     await user.save();
 
 
