@@ -27,10 +27,9 @@ function Header({ searchTerm, setSearchTerm, handleNavigateProfile }) {
 
   return (
     <header
-      className={`bg-white border-b border-gray-100 rounded-[0px] sticky top-0 z-40 transition-all duration-300  ${
-        scrolled &&
+      className={`bg-white border-b border-gray-100 rounded-[0px] sticky top-0 z-40 transition-all duration-300  ${scrolled &&
         "bg-white/30 rounded-full top-4  p-2  shadow-lg backdrop-blur-md transition-all duration-300"
-      }`}
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -70,7 +69,7 @@ function Header({ searchTerm, setSearchTerm, handleNavigateProfile }) {
                 <User className="w-5 h-5 text-white" />
               </div>
               <span className="text-sm font-medium text-gray-700">
-                {user.username}
+                {user?.username}
               </span>
             </div>
           </div>

@@ -3,6 +3,7 @@ import { fetchStuff } from "../service/api";
 
 export const AuthContext = createContext();
 
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -36,6 +37,7 @@ export const AuthProvider = ({ children }) => {
           },
           countriesVisited: response.data.user.countriesVisited.length || response.data.user.countriesVisited,
           entries: response.data.entries.length || response.data.entries,
+          recentEntries: response.data.recentEntries.length || response.data.recentEntries
         }
         setUser(userData);
       } else {

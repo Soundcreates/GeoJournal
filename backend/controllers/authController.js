@@ -2,6 +2,7 @@ const userModel = require('../models/userModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const journalModel = require("../models/journalModel");
+const { isThisMonth } = require("../config/monthChecker");
 
 module.exports.registerController = async (req, res) => {
   const { username, email, password, firstName, currentLocation } = req.body;
@@ -95,7 +96,13 @@ module.exports.me = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     const entries = await journalModel.find({ userId: user._id });
-    return res.status(200).json({ user, entries });
+    const recentEntries = entries.filter(entry => {
+      if (isThisMonth(entry.createdAt)) {
+        return entry;
+      }
+
+    })
+    return res.status(200).json({ user, entries, recentEntries });
   } catch (err) {
     console.log(err.message);
     return res.status(500).json({ message: "Internal server error" });

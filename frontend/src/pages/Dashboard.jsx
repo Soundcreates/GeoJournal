@@ -31,7 +31,7 @@ import ViewJournal from "../comps/ViewJournal.jsx";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { loading, user } = useAuth();
+  const { loading, user, getUser } = useAuth();
   const [viewMode, setViewMode] = useState("grid");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
@@ -44,6 +44,9 @@ export default function Dashboard() {
   //state for journal entries
   const [journalEntries, setJournalEntries] = useState([]);
 
+  useEffect(() => {
+    getUser();
+  }, [])
   const handleFetchJournalEntries = async () => {
     try {
       const response = await fetchStuff.get("/journals", {
@@ -66,6 +69,7 @@ export default function Dashboard() {
       );
 
       setJournalEntries(response.data.formattedJournals || []);
+
       console.log("Fetched journal entries:", response.data);
     } catch (error) {
       console.error("Error fetching journal entries:", error);
@@ -84,7 +88,7 @@ export default function Dashboard() {
     totalEntries: journalEntries.length,
     countriesVisited: countries.length,
     totalLikes: journalEntries.reduce((sum, entry) => sum + entry.likes, 0),
-    thisMonth: countries.length,
+    thisMonth: user.recentEntries,
   };
 
   const handleLike = (entryId) => {
