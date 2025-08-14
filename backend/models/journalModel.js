@@ -33,7 +33,12 @@ const journalSchema = mongoose.Schema({
     createdAt: {
         type: Date,
         default: () => dayjs().toDate(),
-    }
+    },
+    likes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref : 'User'
+
+    }]
 
 })
 

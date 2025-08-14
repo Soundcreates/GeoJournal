@@ -62,7 +62,11 @@ const userSchema = mongoose.Schema({
             type: String,
             default: "Unknown Country",
         }
-    }
+    },
+    likedPosts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Journal'
+    }]
 
 });
 

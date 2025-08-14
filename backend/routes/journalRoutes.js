@@ -1,7 +1,7 @@
 const express = require('express');
 const journalRouter = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
-const { getRecentEntries, askGemini, createJournal, getAllJournals, getJournalById, updateJournal, deleteJournal } = require('../controllers/journalController');
+const { addLike, getRecentEntries, askGemini, createJournal, getAllJournals, getJournalById, updateJournal, deleteJournal } = require('../controllers/journalController');
 
 journalRouter.post('/', authMiddleware, createJournal);
 
@@ -15,6 +15,7 @@ journalRouter.delete('/:id', authMiddleware, deleteJournal);
 
 // Route for asking Gemini AI
 journalRouter.post('/ask-gemini', authMiddleware, askGemini);
+journalRouter.post('/add-like/:id', authMiddleware, addLike);
 
 
 module.exports = journalRouter;

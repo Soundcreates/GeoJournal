@@ -1,4 +1,5 @@
 const User = require('../models/userModel');
+const journalModel = require('../models/journalModel');
 
 module.exports.sendRequest = async (req, res) => {
   const userId = req.user.id;
@@ -185,3 +186,38 @@ module.exports.getFriendRequests = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 }
+
+module.exports.fetchLikes = async (req, res) => {
+  const journalId = req.params.journalId;
+  const userId = req.user.id;
+
+  try {
+    if (!journalId) {
+      return res.status(400).json({ message: "Journal ID is required" });
+    }
+
+    // Fetch user & journal with only required fields
+    const user = await User.findById(userId).select("likedPosts");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const journal = await journalModel.findById(journalId).select("likes");
+    if (!journal) {
+      return res.status(404).json({ message: "Journal not found" });
+    }
+
+    // Check if the user has liked the journal
+    const alreadyLiked = user.likedPosts.includes(journalId);
+
+    return res.status(200).json({
+      status: alreadyLiked,          // true if user liked it
+      likesCount: journal.likes.length, // actual like count
+      journalId
+    });
+
+  } catch (err) {
+    console.error("Error fetching likes:", err.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};

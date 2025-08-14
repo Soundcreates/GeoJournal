@@ -4,6 +4,7 @@ const dayjs = require('dayjs');
 const userModel = require('../models/userModel');
 const mongoose = require('mongoose');
 
+
 module.exports.createJournal = async (req, res) => {
   const { title, description, imageUrl, locationName, coordinates, country } = req.body;
   console.log("The journal's country is: ", country.toString());
@@ -146,4 +147,57 @@ module.exports.askGemini = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 }
+
+module.exports.addLike = async (req, res) => {
+  const userId = req.user.id;
+  const journalId = req.params.id;
+
+  try {
+    const user = await userModel.findById(userId).select("likedPosts");
+    const journal = await journalModel.findById(journalId).select("likes");
+
+    if (!journal) {
+      return res.status(404).json({ message: "Journal not found" });
+    }
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const alreadyLiked = journal.likes.includes(userId);
+
+    if (alreadyLiked) {
+      // UNLIKE
+      journal.likes = journal.likes.filter(id => id.toString() !== userId);
+      user.likedPosts = user.likedPosts.filter(id => id.toString() !== journalId);
+
+      await journal.save();
+      await user.save();
+
+      return res.status(200).json({
+        message: "Journal unliked successfully",
+        status: false,
+        likesCount: journal.likes.length
+      });
+    } else {
+      // LIKE
+      journal.likes.push(userId);
+      user.likedPosts.push(journalId);
+
+      await journal.save();
+      await user.save();
+
+      return res.status(200).json({
+        message: "Journal liked successfully",
+        status: true,
+        likesCount: journal.likes.length
+      });
+    }
+
+  } catch (err) {
+    console.error("Error adding like:", err.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
 
