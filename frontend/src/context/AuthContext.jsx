@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
           username: response.data.user.username,
           email: response.data.user.email,
           avatar: response.data.user.avatar,
-          firstName: response.data.user.firstNmme,
+          firstName: response.data.user.firstName,
           currentLocation: response.data.user.currentLocation || {
             city: "Unknown City",
             country: "Unknown Country",

@@ -7,7 +7,7 @@ function Logout() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate('/');
+    navigate('/')
 
   }
   return (
