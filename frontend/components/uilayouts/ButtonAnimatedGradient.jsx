@@ -1,9 +1,7 @@
 'use client';
 import { useRef, useState } from 'react';
-
-
-
-const ButtonAnimatedGradient = () => {
+import Earth from "./globe.jsx";
+const ButtonAnimatedGradient = ({message}) => {
     const divRef = useRef(null);
     const [isFocused, setIsFocused] = useState(false);
     const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -37,7 +35,7 @@ const ButtonAnimatedGradient = () => {
                 onBlur={handleBlur}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
-                className="hover:cursor-pointer relative inline-flex w-fit mx-auto h-12 items-center justify-center overflow-hidden rounded-md border-2 dark:border-[#656fe2] border-[#c0c6fc] bg-gradient-to-r dark:from-[#070e41] dark:to-[#141d57] from-[#9ba3fdfd] to-[#3d5af1] px-6 font-medium text-white  shadow-2xl transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50">
+                className="hover:cursor-pointer relative inline-flex w-full mx-auto h-22 items-center justify-center overflow-hidden rounded-md border-2 dark:border-[#656fe2] border-[#c0c6fc] bg-gradient-to-r dark:from-[#070e41] dark:to-[#141d57] from-[#9ba3fdfd] to-[#3d5af1] px-6 font-medium text-white  shadow-2xl transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50">
                 <div
                     className="pointer-events-none absolute -inset-px opacity-0 transition duration-300"
                     style={{
@@ -45,7 +43,11 @@ const ButtonAnimatedGradient = () => {
                         background: `radial-gradient(100px circle at ${position.x}px ${position.y}px, #656fe288, #00000026)`,
                     }}
                 />
-                <span className="relative z-20">Look where others are travelling!</span>
+                <div className = "w-full flex z-20 relative justify-between items-center">
+                    <span className="relative z-20 text-md ">{message}</span>
+                    <Earth />
+                </div>
+
             </button>
         </>
     );

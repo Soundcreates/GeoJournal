@@ -3,6 +3,8 @@ import { useAuth } from "./context/AuthContext";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+//dashboard2 for revamping ui,
+import Dashboard2 from "./pages/Dashboard2.jsx";
 import { AuthProvider } from "./context/AuthContext";
 import NotFound from "./pages/NotFound";
 import Loader from "./pages/Loader";
@@ -22,7 +24,7 @@ const AppContent = () => {
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/dashboard" element={<Dashboard2 />} />
       <Route path="/profile/:userId" element={<ProfilePage />} />
       <Route path="/add-entry" element={<AddEntry />} />
       <Route path="/oauth-success" element={<OauthSuccess />} />
