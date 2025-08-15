@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import AddEntryButton from "../comps/AddEntryButton.jsx";
 import ViewJournal from "../comps/ViewJournal.jsx";
+import ButtonAnimatedGradient from "../../components/uilayouts/ButtonAnimatedGradient.jsx";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -218,8 +219,14 @@ export default function Dashboard() {
               >
                 <List className="w-5 h-5" />
               </button>
+
             </div>
+            <div>
+              <ButtonAnimatedGradient />
+            </div>
+
           </div>
+
         </div>
 
         {/* Journal Entries */}
