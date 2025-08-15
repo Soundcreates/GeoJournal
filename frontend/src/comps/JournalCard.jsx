@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   Heart,
   MoreHorizontal,
@@ -7,14 +7,48 @@ import {
   MessageCircle,
   Share2,
 } from "lucide-react";
+import { fetchStuff } from "../service/api.js";
 
 
 
 
-const JournalCard = ({ entry, handleLike, likedEntries }) => {
+const JournalCard = ({ entry, key}) => {
 
+const [liked, setLiked ] = useState({
+  status: false,
+  count: 0,
+});
+const [commentCount , setCommentCount] = useState(0);
+   const fetchCardComments = async() => {
+    const response = await fetchStuff.get(`/comments/${entry.id}`, {
+      headers:  {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      }
+    });
+    if(response.status === 200)
+    {
+      setCommentCount(response.data.comments.length);
+    }
+  }
+  useEffect(() => {
 
-
+    const fetchIsLiked = async() => {
+      const response  = await fetchStuff.get(`/users/fetchLikes/${entry.id}`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }
+      })
+      if(response.status === 200)
+      {
+        setLiked({
+          status: response.data.status,
+            count: response.data.likesCount
+        })
+      }
+    }
+    fetchCardComments();
+    fetchIsLiked();
+  }, []);
   return (
     <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
       <div className="relative">
@@ -26,20 +60,7 @@ const JournalCard = ({ entry, handleLike, likedEntries }) => {
           />
         )}
 
-        <div className="absolute top-3 right-3">
-          <button
-            onClick={() => handleLike(entry.id)}
-            className={`w-10 h-10 rounded-full backdrop-blur-sm border border-white border-opacity-20 flex items-center justify-center transition-all ${likedEntries.has(entry.id)
-              ? "bg-red-500 text-white"
-              : "bg-white bg-opacity-80 text-gray-600 hover:bg-red-500 hover:text-white"
-              }`}
-          >
-            <Heart
-              className={`w-5 h-5 ${likedEntries.has(entry.id) ? "fill-current" : ""
-                }`}
-            />
-          </button>
-        </div>
+
         <div className="absolute bottom-3 left-3">
           <span className="px-3 py-1 bg-black bg-opacity-50 text-white text-xs rounded-full backdrop-blur-sm">
             {entry.weather}
@@ -72,12 +93,12 @@ const JournalCard = ({ entry, handleLike, likedEntries }) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4 text-gray-500">
             <button className="flex items-center space-x-1 hover:text-red-500 transition-colors">
-              <Heart className="w-4 h-4" />
-              <span className="text-xs">{entry.likes}</span>
+              <Heart className={`w-4 h-4 ${liked.status ? "text-red-500" : ""}`} />
+              <span className="text-xs">{liked.count}</span>
             </button>
             <button className="flex items-center space-x-1 hover:text-blue-500 transition-colors">
-              <MessageCircle className="w-4 h-4" />
-              <span className="text-xs">{entry.comments}</span>
+              <MessageCircle className={`w-4 h-4 ${commentCount > 0 ? "text-blue-500" : ""}`} />
+              <span className="text-xs">{commentCount}</span>
             </button>
             <button className="flex items-center space-x-1 hover:text-green-500 transition-colors">
               <Share2 className="w-4 h-4" />

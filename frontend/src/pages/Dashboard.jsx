@@ -237,8 +237,7 @@ export default function Dashboard() {
               <JournalCard
                 key={entry.id}
                 entry={entry}
-                likedEntries={likedEntries}
-                handleLike={handleLike}
+
               />
             </div>
 

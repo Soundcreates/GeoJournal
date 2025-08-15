@@ -193,7 +193,9 @@ module.exports.fetchLikes = async (req, res) => {
 
   try {
     if (!journalId) {
+      console.error("Journal ID is invalid");
       return res.status(400).json({ message: "Journal ID is required" });
+
     }
 
     // Fetch user & journal with only required fields
