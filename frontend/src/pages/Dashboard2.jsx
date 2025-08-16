@@ -34,6 +34,7 @@ import {
   Filter
 } from 'lucide-react';
 import ButtonHoverRight from "../../components/uilayouts/ButtonHoverRight.jsx";
+import QuickStatsSection from "../comps/QuickStatsSection.jsx";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -210,7 +211,12 @@ function Sidebar({ handleNavigateProfile }) {
             <div onClick={handleNavigateProfile}>
               <SidebarItem icon={Users} label="Profile" />
             </div>
-            <SidebarItem icon={LogOut} label="Logout" />
+              <div onClick ={() => {
+                  localStorage.removeItem("token");
+                  navigate('/')
+              }}>
+                <SidebarItem icon={LogOut} label="Logout" />
+              </div>
           </nav>
         </div>
       </div>
@@ -483,52 +489,7 @@ function RightSidebar({ stats }) {
 }
 
 // Quick statistics section
-function QuickStatsSection({ stats }) {
-  return (
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-bold text-white">Quick Stats</h3>
-          <button className="text-gray-400 hover:text-white">
-            <MoreHorizontal size={20} />
-          </button>
-        </div>
 
-        {/* Progress Circle (simplified representation) */}
-        <div className="text-center mb-6">
-          <div className="relative inline-block">
-            <div className="w-20 h-20 bg-[#656fe2] rounded-full flex items-center justify-center mx-auto mb-3">
-              <Globe className="text-white" size={32} />
-            </div>
-            <div className="absolute -top-1 -right-1 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-              {Math.round((stats.countriesVisited / 195) * 100)}%
-            </div>
-          </div>
-          <h4 className="text-white font-semibold mb-1">Countries Explored</h4>
-          <p className="text-gray-400 text-sm">{stats.countriesVisited} of 195 countries visited</p>
-        </div>
-
-        {/* Mini Chart Representation */}
-        <div className="mb-6">
-          <div className="flex items-end justify-between h-32 px-4">
-            <div className="flex items-end gap-2 w-full">
-              <div className="bg-[#c0c6fc]/30 w-8 h-16 rounded-t"></div>
-              <div className="bg-[#656fe2] w-8 h-24 rounded-t"></div>
-              <div className="bg-[#c0c6fc]/30 w-8 h-12 rounded-t"></div>
-              <div className="bg-[#656fe2] w-8 h-32 rounded-t"></div>
-              <div className="bg-[#c0c6fc]/30 w-8 h-8 rounded-t"></div>
-            </div>
-          </div>
-          <div className="flex justify-between text-xs text-gray-400 px-4 mt-2">
-            <span>Jan</span>
-            <span>Feb</span>
-            <span>Mar</span>
-            <span>Apr</span>
-            <span>May</span>
-          </div>
-        </div>
-      </div>
-  );
-}
 
 // Recent activity section
 function RecentActivitySection() {

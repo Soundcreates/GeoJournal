@@ -27,6 +27,7 @@
     "react-geolocated": "^4.3.0",
     "react-leaflet": "^5.0.0",
     "react-router": "^7.7.0",
+    "recharts": "^3.1.2",
     "styled-components": "^6.1.19",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.11"
