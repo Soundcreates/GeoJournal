@@ -322,6 +322,7 @@ function DashboardHeader({ user, searchTerm, setSearchTerm }) {
 
 // Welcome banner section
 function WelcomeBanner({ user }) {
+    const navigate = useNavigate();
   return (
       <div className="bg-gradient-to-r from-[#656fe2] to-purple-600 rounded-2xl p-8 mb-8 shadow-2xl border border-[#c0c6fc]/30">
         <div className="max-w-2xl">
@@ -330,7 +331,7 @@ function WelcomeBanner({ user }) {
             Welcome back, {user?.firstName}!<br />
             Ready to capture your next adventure?
           </h1>
-          <div className="flex gap-4">
+          <div className="flex gap-4" onClick = {() => navigate('/view-others')}>
             <ButtonHoverRight message = "Look where others are travelling!" />
           </div>
         </div>
