@@ -5,15 +5,55 @@ import {
 
 } from "lucide-react";
 import {BarChart, Bar,Legend, Tooltip, XAxis, YAxis, CartesianGrid, ResponsiveContainer} from "recharts"
-
+import dayjs from "dayjs";
+import {useEffect, useState} from "react";
+import {fetchStuff} from "../service/api.js";
 
 function Charts() {
-    const data = [
-        { name: "Jan", sales: 400 },
-        { name: "Feb", sales: 300 },
-        { name: "Mar", sales: 500 },
-        { name: "Apr", sales: 200 },
-    ];
+    const [journals, setJournals ] = useState([]);
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+        const fetchJournalData = async () => {
+
+            try{
+                const response = await fetchStuff.get('/journals/', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                })
+                if(response.status === 200)
+                {
+                    const journalData = response.data.formattedJournals;
+                    setJournals(journalData);
+
+                    const months = ["Jan", "Feb", "Mar", "Apr", "May" , "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+                    const monthMap = months.map(month => ({name : month, count : 0}));
+
+                    journalData.forEach(journal => {
+                        const monthIndex = dayjs(journal.createdAtRaw).month();
+                        monthMap[monthIndex].count++;
+                    });
+
+                    setData(monthMap);
+                }
+            }catch(err)
+            {
+                console.error("Error Fetching Journals", err);
+            }
+
+        }
+
+        fetchJournalData();
+
+    }, []);
+    // const data = [
+    //     { name: "Jan", sales: 400 },
+    //     { name: "Feb", sales: 300 },
+    //     { name: "Mar", sales: 500 },
+    //     { name: "Apr", sales: 200 },
+    // ];
 
     return(
         <ResponsiveContainer width = "100%" height = {400}>
@@ -23,7 +63,7 @@ function Charts() {
 
 
 
-                <Bar dataKey="sales" fill="#8884d8" />
+                <Bar dataKey="count" fill="#8884d8"  />
             </BarChart>
 
         </ResponsiveContainer>

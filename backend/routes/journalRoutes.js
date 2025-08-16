@@ -3,6 +3,8 @@ const journalRouter = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
 const { addLike, getRecentEntries, askGemini, createJournal, getAllJournals, getJournalById, updateJournal, deleteJournal } = require('../controllers/journalController');
 
+// /journals is the base route
+
 journalRouter.post('/', authMiddleware, createJournal);
 
 journalRouter.get('/', authMiddleware, getAllJournals);

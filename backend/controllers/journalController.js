@@ -65,7 +65,7 @@ module.exports.getAllJournals = async (req, res) => {
       imageUrl: journal.imageUrl,
       location: journal.location,
       coordinates: journal.coordinates,
-
+        createdAtRaw: journal.createdAt,
       createdAt: dayjs(journal.createdAt).format('MMM D, YYYY h:mm A'),
     }))
     return res.status(200).json({
