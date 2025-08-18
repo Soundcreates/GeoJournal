@@ -65,7 +65,7 @@ module.exports.getAllJournals = async (req, res) => {
       imageUrl: journal.imageUrl,
       location: journal.location,
       coordinates: journal.coordinates,
-        createdAtRaw: journal.createdAt,
+      createdAtRaw: journal.createdAt,
       createdAt: dayjs(journal.createdAt).format('MMM D, YYYY h:mm A'),
     }))
     return res.status(200).json({
@@ -89,11 +89,11 @@ module.exports.getRecentEntries = async (req, res) => {
 
   try {
     const recentJournals = await journalModel.find({ userId }).sort({ createdAt: -1 }).limit(3);
-    if (recentJournals.length === 0 || !recentJournals) {
-      return res.status(404).json({ message: "No recent journals found" });
-    }
+    // if (recentJournals.length === 0 || !recentJournals) {
+    //   return res.status(404).json({ message: "No recent journals found" });
+    // }
     return res.status(200).json({
-      recentJournals
+      recentJournals,
     })
 
   } catch (err) {

@@ -12,7 +12,8 @@ import ProfilePage from "./pages/ProfilePage";
 import AddEntry from "./pages/AddEntry";
 import OauthSuccess from "./pages/OauthSuccess";
 import { ErrorProvider } from "./context/errorContext";
-import {Others} from "./pages/Others.jsx";
+import { Others } from "./pages/Others.jsx";
+import OtherUserProfile from "./pages/OtherUserProfile.jsx";
 
 const AppContent = () => {
   const { loading } = useAuth();
@@ -27,9 +28,10 @@ const AppContent = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/dashboard" element={<Dashboard2 />} />
       <Route path="/profile/:userId" element={<ProfilePage />} />
+      <Route path="/otherProfile/:userId" element={<OtherUserProfile />} />
       <Route path="/add-entry" element={<AddEntry />} />
       <Route path="/oauth-success" element={<OauthSuccess />} />
-        <Route path = "/view-others" element = {<Others />} />
+      <Route path="/view-others" element={<Others />} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>

@@ -223,3 +223,100 @@ module.exports.fetchLikes = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+module.exports.getUsers = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    console.log("Fetching users from database...");
+    const users = await User.find({
+      _id: { $ne: userId }
+    }).select('-password -email -googleId')
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+      console.log("User not found");
+    }
+    return res.status(200).json({ users })
+  } catch (err) {
+    console.error("Error fetching likes:", err.message);
+  }
+}
+
+module.exports.getSpecificUser = async (req, res) => {
+  const userId = req.params.userId;
+  console.log("Fetching user: ", userId);
+  try {
+    const user = await User.findById(userId).select('-password -email -googleId');
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json({ user });
+  } catch (err) {
+    console.error("Error fetching user:", err.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+module.exports.followUnfollowUser = async (req, res) => {
+  const userId = req.user.id;
+  const targetUserId = req.params.userId;
+  console.log("followUnfollow endpoint hit!");
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      console.log("Error at followunfollow controller, user not found");
+    }
+    const targetUser = await User.findById(targetUserId);
+    if (!targetUser) {
+      console.log("Error at followUnfollow controller, target user not found");
+    }
+    if (targetUser.followers.includes(userId.toString())) {
+      //unfollow the user
+      targetUser.followers = targetUser.followers.filter(id => id != userId);
+      user.following = user.following.filter(id => id != targetUserId);
+      await targetUser.save();
+      await user.save();
+      console.log("Unfollowed the target user: ", targetUser.username);
+      return res.status(200).json({ message: "Unfollowed successfully", status: false })
+    }
+
+    //if not already following, follow
+    targetUser.followers.push(userId);
+    user.following.push(targetUserId);
+    await targetUser.save();
+    await user.save();
+    console.log("Followed the target user: ", targetUser.username);
+
+    return res.status(200).json({
+      status: true
+    })
+
+  } catch (err) {
+    console.log("Error at followUnfollow controller:", err.message);
+  }
+}
+
+module.exports.fetchFollowStatus = async (req, res) => {
+  const userId = req.user.id;
+  const targetUserId = req.params.userId;
+  console.log('fetchfollowstatus endpoint hit!')
+  try {
+    const user = await User.findById(userId);
+    if (!user) console.log("Error at fetchFollowStatus controller, user not found");
+    const targetUser = await User.findById(targetUserId);
+    if (!targetUser) console.log("Error at fetchFollowStatus controller, target user not found");
+    return res.status(200).json({
+      status: targetUser.followers.includes(userId) ? true : false,
+      targetUser: {
+        followersCount: targetUser.followers.length,
+        followingCount: targetUser.following.length
+      },
+      user: {
+        followersCount: user.followers.length,
+        followingCount: user.following.length
+      }
+    });
+  } catch (err) {
+    console.log("Error at fetchFollowStatus controller:", err.message);
+  }
+}

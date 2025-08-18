@@ -66,6 +66,14 @@ const userSchema = mongoose.Schema({
     likedPosts: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Journal'
+    }],
+    followers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    following: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }]
 
 });
