@@ -44,7 +44,9 @@ An interactive journaling web application that lets users **pin journal entries 
 ```bash
 git clone https://github.com/yourusername/geojournal.git
 cd geojournal
-
+```
+### Setup backend
+```bash
 cd backend
 npm install
 
@@ -53,6 +55,16 @@ JWT_SECRET=your_jwt_secret
 OPENAI_API_KEY=your_openai_api_key
 PORT=5000
 
-Run backend
+npm start
+
+```
+
+###Setup frontend
+
+```bash
+cd frontend
+npm install
 npm run dev
+
+
 
