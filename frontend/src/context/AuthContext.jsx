@@ -3,11 +3,10 @@ import { fetchStuff } from "../service/api";
 
 export const AuthContext = createContext();
 
-
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const getUser = async () => {
     try {
@@ -35,27 +34,32 @@ export const AuthProvider = ({ children }) => {
             city: "Unknown City",
             country: "Unknown Country",
           },
-          countriesVisited: response.data.user.countriesVisited.length || response.data.user.countriesVisited,
+          countriesVisited:
+            response.data.user.countriesVisited.length ||
+            response.data.user.countriesVisited,
           entries: response.data.entries.length || response.data.entries,
-          recentEntries: response.data.recentEntries.length || response.data.recentEntries
-        }
+          recentEntries:
+            response.data.recentEntries.length || response.data.recentEntries,
+          followers: response.data.user.followers.length || 0,
+          following: response.data.user.following.length || 0,
+        };
         setUser(userData);
+        setIsAuthenticated(true);
       } else {
         localStorage.removeItem("token");
+        setIsAuthenticated(false);
       }
-
-
     } catch (err) {
       console.log(err.message);
       // Clear invalid token
       localStorage.removeItem("token");
+      setIsAuthenticated(false);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-
     getUser();
   }, []);
 
@@ -65,6 +69,7 @@ export const AuthProvider = ({ children }) => {
     loading,
     setLoading,
     getUser,
+    isAuthenticated,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

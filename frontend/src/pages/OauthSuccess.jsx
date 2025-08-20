@@ -12,21 +12,21 @@ export default function OauthSuccess() {
     const token = searchParams.get("token");
     const userInfoParam = searchParams.get("userInfo");
 
-    if (token && userInfoParam) {
+    if (token || userInfoParam) {
       try {
         localStorage.setItem("token", token);
 
         const userInfo = JSON.parse(decodeURIComponent(userInfoParam));
 
         // ✅ Get location from cache or use defaults
-        const cachedLocation = localStorage.getItem('userLocation');
-        const locationData = cachedLocation ?
-          JSON.parse(cachedLocation) :
-          { city: "Unknown City", country: "Unknown Country" };
+        const cachedLocation = localStorage.getItem("userLocation");
+        const locationData = cachedLocation
+          ? JSON.parse(cachedLocation)
+          : { city: "Unknown City", country: "Unknown Country" };
 
         const userWithLocation = {
           ...userInfo,
-          currentLocation: locationData
+          currentLocation: locationData,
         };
 
         setUser(userWithLocation);
