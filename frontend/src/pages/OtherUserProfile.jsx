@@ -21,43 +21,43 @@ import {
   UserPlus,
   MessageCircle,
   Share2,
-  Flag
+  Flag,
 } from "lucide-react";
 import { useParams, useNavigate } from "react-router";
 import { useAuth } from "../context/AuthContext";
 import { fetchStuff } from "../service/api";
-
+import { useMessage } from "../context/messageContext";
 
 const OtherUserProfile = () => {
-
-
-
   //  user ID from URL params
   const { userId } = useParams();
 
-
-
-
   // UI States
   const [selectedEntry, setSelectedEntry] = useState(null);
-  const { user: currentUser, loading } = useAuth();  //  current user (the logged-in user viewing the profile) with loading state from authContext
+  const { user: currentUser, loading } = useAuth(); //  current user (the logged-in user viewing the profile) with loading state from authContext
   const [isLoaded, setIsLoaded] = useState(!loading);
   const [openTravelMap, setOpenTravelMap] = useState(false);
   const [specificUser, setSpecificUser] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
-
+  const { setOpenMessageModal } = useMessage();
 
   //function to fetch follow status
   const fetchFollowStatus = async () => {
     try {
-      const response = await fetchStuff.get(`/users/fetchFollowStatus/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+      const response = await fetchStuff.get(
+        `/users/fetchFollowStatus/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
-      });
+      );
       if (response.status === 200) {
         setIsFollowing(response.data.status);
-        console.log("Fetched follow status: ", response.data.status ? "Following" : "Not following");
+        console.log(
+          "Fetched follow status: ",
+          response.data.status ? "Following" : "Not following"
+        );
       }
     } catch (err) {
       console.error("Error fetching follow status: ", err.message);
@@ -66,33 +66,36 @@ const OtherUserProfile = () => {
 
   useEffect(() => {
     fetchFollowStatus();
-  })
+  });
   //fetching the specific user on every mount/render
 
   //function
   const fetchSpecificUser = async () => {
     try {
-      const response = await fetchStuff.get(`/users/getSpecificUser/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+      const response = await fetchStuff.get(
+        `/users/getSpecificUser/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
-      });
+      );
       console.log("Response status: ", response.status);
       if (response.status === 200) {
         setSpecificUser(response.data.user);
         console.log("Fetched the specific user data: ", response.data.user);
       }
     } catch (err) {
-      console.log("Error has occured at otheruserprofilepage at fechspecificUser function");
+      console.log(
+        "Error has occured at otheruserprofilepage at fechspecificUser function"
+      );
       console.error(err.message);
     }
-
   };
   //useffecting it
   useEffect(() => {
     fetchSpecificUser();
   }, [userId]);
-
 
   // Recent entries state
   const [recentEntries, setRecentEntries] = useState([]);
@@ -103,11 +106,14 @@ const OtherUserProfile = () => {
     const fetchRecentEntries = async () => {
       if (!userId) return;
       try {
-        const response = await fetchStuff.get(`/journals/recentJournals/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        const response = await fetchStuff.get(
+          `/journals/recentJournals/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
           }
-        });
+        );
         if (response.status === 200 && response.data.recentJournals) {
           setRecentEntries(response.data.recentJournals);
           if (response.data.recentJournals.length === 0) {
@@ -124,13 +130,7 @@ const OtherUserProfile = () => {
       }
     };
     fetchRecentEntries();
-
-
   }, [userId]);
-
-
-
-
 
   // Simulate loading effect
   // useEffect(() => {
@@ -144,26 +144,35 @@ const OtherUserProfile = () => {
   // Mock follow/unfollow handler
   const handleFollowToggle = async () => {
     try {
-      const response = await fetchStuff.post(`/users/followUnfollow/${userId}`, {}, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+      const response = await fetchStuff.post(
+        `/users/followUnfollow/${userId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
-      });
+      );
       if (response.status === 200) {
         setIsFollowing(response.data.status);
-        console.log("Follow status updated: ", response.data.status ? "Following" : "Not following");
-
+        console.log(
+          "Follow status updated: ",
+          response.data.status ? "Following" : "Not following"
+        );
       }
     } catch (err) {
-      console.error("Error at otheruserprofile page in handlefollowtoggle function : ", err.message);
+      console.error(
+        "Error at otheruserprofile page in handlefollowtoggle function : ",
+        err.message
+      );
     }
 
     fetchSpecificUser();
-
   };
 
   // Mock message user handler
   const handleMessageUser = () => {
+    setOpenMessageModal(true);
     console.log("Opening chat with user:", specificUser.username);
   };
 
@@ -194,7 +203,6 @@ const OtherUserProfile = () => {
     );
   }
 
-
   // Achievement data (with unlock logic)
   const achievements = [
     {
@@ -202,57 +210,62 @@ const OtherUserProfile = () => {
       title: "Continent Collector",
       desc: "Visited 3 continents",
       color: "bg-blue-500",
-      unlocked: (specificUser?.countriesVisited?.length || 0) >= 15
+      unlocked: (specificUser?.countriesVisited?.length || 0) >= 15,
     },
     {
       icon: Plane,
       title: "Frequent Flyer",
       desc: "50+ flights logged",
       color: "bg-green-500",
-      unlocked: (specificUser?.milesTraveled || 0) >= 50000
+      unlocked: (specificUser?.milesTraveled || 0) >= 50000,
     },
     {
       icon: BookOpen,
       title: "Prolific Writer",
       desc: "100+ journal entries",
       color: "bg-purple-500",
-      unlocked: (specificUser?.journalEntries || 0) >= 100
+      unlocked: (specificUser?.journalEntries || 0) >= 100,
     },
     {
       icon: Camera,
       title: "Photo Master",
       desc: "500+ photos taken",
       color: "bg-pink-500",
-      unlocked: (specificUser?.photosTaken || 0) >= 500
+      unlocked: (specificUser?.photosTaken || 0) >= 500,
     },
     {
       icon: Star,
       title: "Local Expert",
       desc: "Featured in travel guides",
       color: "bg-yellow-500",
-      unlocked: !!specificUser?.isFeatured
+      unlocked: !!specificUser?.isFeatured,
     },
     {
       icon: Award,
       title: "Adventure Seeker",
       desc: "Climbed 5+ mountains",
       color: "bg-red-500",
-      unlocked: (specificUser?.mountainsClimbed || 0) >= 5
+      unlocked: (specificUser?.mountainsClimbed || 0) >= 5,
     },
   ];
 
-
   // User statistics
   const stats = [
-    { number: (specificUser?.countriesVisited || []).length, label: "Countries" },
+    {
+      number: (specificUser?.countriesVisited || []).length,
+      label: "Countries",
+    },
     { number: specificUser?.journalEntries || 0, label: "Entries" },
-    { number: (specificUser?.milesTraveled || 0).toLocaleString(), label: "Miles" },
+    {
+      number: (specificUser?.milesTraveled || 0).toLocaleString(),
+      label: "Miles",
+    },
     { number: specificUser?.photosTaken || 0, label: "Photos" },
   ];
 
   const currentLocation = {
     city: specificUser?.currentLocation?.city || "-",
-    country: specificUser?.currentLocation?.country || "-"
+    country: specificUser?.currentLocation?.country || "-",
   };
 
   return (
@@ -263,7 +276,9 @@ const OtherUserProfile = () => {
           <div className="relative w-[90%] max-w-5xl h-[80%] bg-gray-800 rounded-3xl shadow-2xl overflow-hidden border border-[#c0c6fc]/20">
             <div className="p-8 text-center">
               <h2 className="text-2xl font-bold mb-4">Travel Map</h2>
-              <p className="text-gray-400 mb-8">Interactive travel map would appear here</p>
+              <p className="text-gray-400 mb-8">
+                Interactive travel map would appear here
+              </p>
               <button
                 onClick={() => setOpenTravelMap(false)}
                 className="bg-[#656fe2] hover:bg-[#656fe2]/80 px-6 py-2 rounded-lg transition-colors"
@@ -301,12 +316,17 @@ const OtherUserProfile = () => {
 };
 
 // Sidebar Component for Other User Profile
-function OtherProfileSidebar({ navigate, specificUser, isFollowing, onFollowToggle }) {
+function OtherProfileSidebar({
+  navigate,
+  specificUser,
+  isFollowing,
+  onFollowToggle,
+}) {
   return (
     <div className="w-64 bg-gray-800 p-6 shadow-lg border-r border-[#c0c6fc]/20">
       {/* Back Button */}
       <button
-        onClick={() => navigate('/view-others')}
+        onClick={() => navigate("/view-others")}
         className="flex items-center gap-3 mb-8 text-gray-300 hover:text-white transition-colors"
       >
         <ArrowLeft size={20} />
@@ -323,17 +343,22 @@ function OtherProfileSidebar({ navigate, specificUser, isFollowing, onFollowTogg
 
       {/* Quick Actions */}
       <div className="mb-8">
-        <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-4">Quick Actions</h3>
+        <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-4">
+          Quick Actions
+        </h3>
         <div className="space-y-3">
           <button
             onClick={onFollowToggle}
-            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isFollowing
-              ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-              : 'bg-[#656fe2] text-white hover:bg-[#656fe2]/80'
-              }`}
+            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+              isFollowing
+                ? "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                : "bg-[#656fe2] text-white hover:bg-[#656fe2]/80"
+            }`}
           >
             <UserPlus size={16} />
-            <span className="text-sm">{isFollowing ? 'Unfollow' : 'Follow'}</span>
+            <span className="text-sm">
+              {isFollowing ? "Unfollow" : "Follow"}
+            </span>
           </button>
 
           <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors">
@@ -350,9 +375,15 @@ function OtherProfileSidebar({ navigate, specificUser, isFollowing, onFollowTogg
 
       {/* Navigation Section */}
       <div className="mb-8">
-        <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-4">Navigation</h3>
+        <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-4">
+          Navigation
+        </h3>
         <nav className="space-y-2">
-          <SidebarItem icon={LayoutDashboard} label="Dashboard" onClick={() => navigate('/dashboard')} />
+          <SidebarItem
+            icon={LayoutDashboard}
+            label="Dashboard"
+            onClick={() => navigate("/dashboard")}
+          />
           <SidebarItem icon={Users} label="Profile" active />
           <SidebarItem icon={BookOpen} label="Entries" />
           <SidebarItem icon={Globe} label="Travel Map" />
@@ -366,7 +397,7 @@ function OtherProfileSidebar({ navigate, specificUser, isFollowing, onFollowTogg
           <span className="text-sm">Report User</span>
         </button>
       </div>
-    </div >
+    </div>
   );
 }
 
@@ -374,8 +405,9 @@ function OtherProfileSidebar({ navigate, specificUser, isFollowing, onFollowTogg
 function SidebarItem({ icon: Icon, label, active = false, onClick }) {
   return (
     <div
-      className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${active ? 'bg-[#656fe2] text-white' : 'text-gray-300 hover:bg-gray-700'
-        }`}
+      className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
+        active ? "bg-[#656fe2] text-white" : "text-gray-300 hover:bg-gray-700"
+      }`}
       onClick={onClick}
     >
       <Icon size={20} />
@@ -398,7 +430,7 @@ function MainOtherProfileContent({
   isLoaded,
   isFollowing,
   onFollowToggle,
-  onMessageUser
+  onMessageUser,
 }) {
   return (
     <div className="flex-1 flex">
@@ -433,7 +465,12 @@ function MainOtherProfileContent({
 }
 
 // Profile header for other user
-function OtherProfileHeader({ specificUser, isFollowing, onFollowToggle, onMessageUser }) {
+function OtherProfileHeader({
+  specificUser,
+  isFollowing,
+  onFollowToggle,
+  onMessageUser,
+}) {
   return (
     <div className="flex items-center justify-between mb-8">
       <div>
@@ -450,13 +487,14 @@ function OtherProfileHeader({ specificUser, isFollowing, onFollowToggle, onMessa
       <div className="flex items-center gap-4">
         <button
           onClick={onFollowToggle}
-          className={`px-6 py-2 rounded-lg transition-colors font-medium ${isFollowing
-            ? 'bg-gray-700 text-white hover:bg-gray-600 border border-gray-600'
-            : 'bg-[#656fe2] text-white hover:bg-[#656fe2]/80'
-            }`}
+          className={`px-6 py-2 rounded-lg transition-colors font-medium ${
+            isFollowing
+              ? "bg-gray-700 text-white hover:bg-gray-600 border border-gray-600"
+              : "bg-[#656fe2] text-white hover:bg-[#656fe2]/80"
+          }`}
         >
           <UserPlus size={16} className="inline mr-2" />
-          {isFollowing ? 'Following' : 'Follow'}
+          {isFollowing ? "Following" : "Follow"}
         </button>
 
         <button
@@ -477,7 +515,9 @@ function OtherProfileHeader({ specificUser, isFollowing, onFollowToggle, onMessa
 
 // Profile hero section for other user
 function OtherProfileHero({ specificUser, currentLocation, stats }) {
-  const joinDate = specificUser?.createdAt ? new Date(specificUser.createdAt).toLocaleDateString() : 'Recently';
+  const joinDate = specificUser?.createdAt
+    ? new Date(specificUser.createdAt).toLocaleDateString()
+    : "Recently";
 
   return (
     <div className="bg-gradient-to-r from-[#656fe2] to-purple-600 rounded-2xl p-8 mb-8 shadow-2xl border border-[#c0c6fc]/30">
@@ -486,10 +526,13 @@ function OtherProfileHero({ specificUser, currentLocation, stats }) {
         <div className="relative group">
           <div className="w-32 h-32 bg-gradient-to-br from-orange-400 to-pink-500 rounded-full overflow-hidden shadow-xl group-hover:scale-105 transition-transform duration-300">
             <img
-              src={specificUser?.avatar || '/default-avatar.png'}
+              src={specificUser?.avatar || "/default-avatar.png"}
               alt="Profile"
               className="w-full h-full object-cover"
-              onError={e => { e.target.onerror = null; e.target.src = '/default-avatar.png'; }}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "/default-avatar.png";
+              }}
             />
           </div>
           {/* Online/Offline Status */}
@@ -501,17 +544,18 @@ function OtherProfileHero({ specificUser, currentLocation, stats }) {
         {/* Profile Info */}
         <div className="text-center md:text-left text-white flex-1">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            {specificUser?.username || 'Unknown User'}
+            {specificUser?.username || "Unknown User"}
           </h2>
 
           <div className="space-y-2 mb-6">
             <p className="flex items-center justify-center md:justify-start gap-2 text-lg">
               <Globe className="w-5 h-5" />
-              {specificUser?.title || 'No Title'}
+              {specificUser?.title || "No Title"}
             </p>
             <p className="flex items-center justify-center md:justify-start gap-2">
               <MapPin className="w-4 h-4" />
-              Currently in: {currentLocation.city || '-'}, {currentLocation.country || '-'}
+              Currently in: {currentLocation.city || "-"},{" "}
+              {currentLocation.country || "-"}
             </p>
             <p className="flex items-center justify-center md:justify-start gap-2">
               <Calendar className="w-4 h-4" />
@@ -524,7 +568,9 @@ function OtherProfileHero({ specificUser, currentLocation, stats }) {
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="text-2xl md:text-3xl font-bold">
-                  {stat.number !== undefined && stat.number !== null ? stat.number : 0}
+                  {stat.number !== undefined && stat.number !== null
+                    ? stat.number
+                    : 0}
                 </div>
                 <div className="text-sm opacity-80">{stat.label}</div>
               </div>
@@ -533,8 +579,13 @@ function OtherProfileHero({ specificUser, currentLocation, stats }) {
 
           {/* Follower Stats */}
           <div className="flex items-center justify-center md:justify-start gap-6 mt-4 text-sm opacity-90">
-            <span>{(specificUser?.followers.length || 0).toLocaleString()} {specificUser?.followers.length > 1 ? "Followers" : "Follower"} </span>
-            <span>{(specificUser?.following.length || 0).toLocaleString()} Following</span>
+            <span>
+              {(specificUser?.followers.length || 0).toLocaleString()}{" "}
+              {specificUser?.followers.length > 1 ? "Followers" : "Follower"}{" "}
+            </span>
+            <span>
+              {(specificUser?.following.length || 0).toLocaleString()} Following
+            </span>
           </div>
         </div>
       </div>
@@ -543,7 +594,13 @@ function OtherProfileHero({ specificUser, currentLocation, stats }) {
 }
 
 // Recent entries section
-function RecentEntriesSection({ recentEntries, selectedEntry, setSelectedEntry, isLoaded, isOtherUser = false }) {
+function RecentEntriesSection({
+  recentEntries,
+  selectedEntry,
+  setSelectedEntry,
+  isLoaded,
+  isOtherUser = false,
+}) {
   return (
     <div className="mb-8">
       <div className="flex items-center gap-3 mb-6">
@@ -551,7 +608,7 @@ function RecentEntriesSection({ recentEntries, selectedEntry, setSelectedEntry, 
           <BookOpen className="w-5 h-5 text-white" />
         </div>
         <h2 className="text-2xl font-bold text-white">
-          {isOtherUser ? 'Recent Entries' : 'Your Recent Entries'}
+          {isOtherUser ? "Recent Entries" : "Your Recent Entries"}
         </h2>
       </div>
 
@@ -564,7 +621,9 @@ function RecentEntriesSection({ recentEntries, selectedEntry, setSelectedEntry, 
             No recent entries
           </h3>
           <p className="text-gray-400 mb-4">
-            {isOtherUser ? 'This user hasn\'t shared any recent entries' : 'Start your travel journal by creating your first entry'}
+            {isOtherUser
+              ? "This user hasn't shared any recent entries"
+              : "Start your travel journal by creating your first entry"}
           </p>
         </div>
       ) : (
@@ -593,7 +652,9 @@ function RecentEntriesSection({ recentEntries, selectedEntry, setSelectedEntry, 
             No recent entries
           </h3>
           <p className="text-gray-400 mb-4">
-            {isOtherUser ? 'This user hasn\'t shared any recent entries' : 'Start your travel journal by creating your first entry'}
+            {isOtherUser
+              ? "This user hasn't shared any recent entries"
+              : "Start your travel journal by creating your first entry"}
           </p>
         </div>
       )}
@@ -602,11 +663,18 @@ function RecentEntriesSection({ recentEntries, selectedEntry, setSelectedEntry, 
 }
 
 // Individual recent entry card
-function RecentEntryCard({ entry, selectedEntry, setSelectedEntry, index, isLoaded }) {
+function RecentEntryCard({
+  entry,
+  selectedEntry,
+  setSelectedEntry,
+  index,
+  isLoaded,
+}) {
   return (
     <div
-      className={`bg-gray-800 rounded-xl p-6 shadow-lg border border-[#c0c6fc]/20 cursor-pointer transition-all duration-300 hover:shadow-xl hover:border-[#c0c6fc]/40 ${selectedEntry === entry._id ? "ring-2 ring-[#656fe2] scale-[1.02]" : ""
-        }`}
+      className={`bg-gray-800 rounded-xl p-6 shadow-lg border border-[#c0c6fc]/20 cursor-pointer transition-all duration-300 hover:shadow-xl hover:border-[#c0c6fc]/40 ${
+        selectedEntry === entry._id ? "ring-2 ring-[#656fe2] scale-[1.02]" : ""
+      }`}
       onClick={() =>
         setSelectedEntry(selectedEntry === entry._id ? null : entry._id)
       }
@@ -655,11 +723,19 @@ function RecentEntryCard({ entry, selectedEntry, setSelectedEntry, index, isLoad
 }
 
 // Right sidebar for other user profile
-function OtherProfileRightSidebar({ setOpenTravelMap, achievements, isLoaded, specificUser }) {
+function OtherProfileRightSidebar({
+  setOpenTravelMap,
+  achievements,
+  isLoaded,
+  specificUser,
+}) {
   return (
     <div className="w-80 p-6 bg-gray-800 border-l border-[#c0c6fc]/20">
       <TravelMapSection setOpenTravelMap={setOpenTravelMap} />
-      <OtherUserAchievementsSection achievements={achievements} isLoaded={isLoaded} />
+      <OtherUserAchievementsSection
+        achievements={achievements}
+        isLoaded={isLoaded}
+      />
       <UserStatsSection specificUser={specificUser} />
     </div>
   );
@@ -677,7 +753,7 @@ function TravelMapSection({ setOpenTravelMap }) {
       </div>
 
       <div
-        onClick={() => setOpenTravelMap(prev => !prev)}
+        onClick={() => setOpenTravelMap((prev) => !prev)}
         className="bg-gradient-to-br from-[#656fe2] to-purple-600 rounded-xl h-48 flex items-center justify-center text-white text-center p-6 cursor-pointer hover:scale-105 transition-transform duration-300 border border-[#c0c6fc]/30"
       >
         <div>
@@ -692,7 +768,9 @@ function TravelMapSection({ setOpenTravelMap }) {
 
 // Achievements section for other user
 function OtherUserAchievementsSection({ achievements, isLoaded }) {
-  const unlockedAchievements = achievements.filter(achievement => achievement.unlocked);
+  const unlockedAchievements = achievements.filter(
+    (achievement) => achievement.unlocked
+  );
 
   return (
     <div className="mb-8">
@@ -701,7 +779,9 @@ function OtherUserAchievementsSection({ achievements, isLoaded }) {
           <Award className="w-5 h-5 text-white" />
         </div>
         <h3 className="text-xl font-bold text-white">Achievements</h3>
-        <span className="text-sm text-gray-400">({unlockedAchievements.length}/{achievements.length})</span>
+        <span className="text-sm text-gray-400">
+          ({unlockedAchievements.length}/{achievements.length})
+        </span>
       </div>
 
       <div className="space-y-3">
@@ -720,7 +800,9 @@ function OtherUserAchievementsSection({ achievements, isLoaded }) {
 
 // Additional user stats section
 function UserStatsSection({ specificUser }) {
-  const memberSince = specificUser?.createdAt ? new Date(specificUser.createdAt).getFullYear() : new Date().getFullYear();
+  const memberSince = specificUser?.createdAt
+    ? new Date(specificUser.createdAt).getFullYear()
+    : new Date().getFullYear();
 
   return (
     <div>
@@ -734,21 +816,30 @@ function UserStatsSection({ specificUser }) {
       <div className="space-y-4">
         <div className="bg-gray-700 rounded-lg p-4 border border-[#c0c6fc]/20">
           <div className="text-center">
-            <div className="text-2xl font-bold text-white mb-1">{memberSince}</div>
+            <div className="text-2xl font-bold text-white mb-1">
+              {memberSince}
+            </div>
             <div className="text-sm text-gray-400">Member Since</div>
           </div>
         </div>
 
         <div className="bg-gray-700 rounded-lg p-4 border border-[#c0c6fc]/20">
           <div className="text-center">
-            <div className="text-2xl font-bold text-white mb-1">{(specificUser?.totalLikes || 0).toLocaleString()}</div>
+            <div className="text-2xl font-bold text-white mb-1">
+              {(specificUser?.totalLikes || 0).toLocaleString()}
+            </div>
             <div className="text-sm text-gray-400">Total Likes Received</div>
           </div>
         </div>
 
         <div className="bg-gray-700 rounded-lg p-4 border border-[#c0c6fc]/20">
           <div className="text-center">
-            <div className="text-2xl font-bold text-white mb-1">{specificUser?.averageRating !== undefined && specificUser?.averageRating !== null ? specificUser.averageRating : 'N/A'}</div>
+            <div className="text-2xl font-bold text-white mb-1">
+              {specificUser?.averageRating !== undefined &&
+              specificUser?.averageRating !== null
+                ? specificUser.averageRating
+                : "N/A"}
+            </div>
             <div className="text-sm text-gray-400">Average Rating</div>
           </div>
         </div>
@@ -763,10 +854,11 @@ function AchievementCard({ achievement, index, isLoaded }) {
 
   return (
     <div
-      className={`rounded-lg p-4 shadow-md border border-[#c0c6fc]/20 transition-all duration-300 ${achievement.unlocked
-        ? 'bg-gray-700 hover:shadow-lg hover:border-[#c0c6fc]/40 hover:scale-105'
-        : 'bg-gray-800 opacity-60'
-        } group`}
+      className={`rounded-lg p-4 shadow-md border border-[#c0c6fc]/20 transition-all duration-300 ${
+        achievement.unlocked
+          ? "bg-gray-700 hover:shadow-lg hover:border-[#c0c6fc]/40 hover:scale-105"
+          : "bg-gray-800 opacity-60"
+      } group`}
       style={{
         animationDelay: `${(index + 3) * 100}ms`,
         animation: isLoaded ? "slideUp 0.6s ease-out forwards" : "none",
@@ -774,14 +866,22 @@ function AchievementCard({ achievement, index, isLoaded }) {
     >
       <div className="flex items-center gap-3">
         <div
-          className={`w-10 h-10 ${achievement.unlocked ? achievement.color : 'bg-gray-600'} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
+          className={`w-10 h-10 ${
+            achievement.unlocked ? achievement.color : "bg-gray-600"
+          } rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
         >
           <Icon className="w-5 h-5 text-white" />
         </div>
         <div>
-          <div className={`font-semibold ${achievement.unlocked ? 'text-white' : 'text-gray-500'}`}>
+          <div
+            className={`font-semibold ${
+              achievement.unlocked ? "text-white" : "text-gray-500"
+            }`}
+          >
             {achievement.title}
-            {achievement.unlocked && <span className="ml-2 text-xs text-green-400">✓</span>}
+            {achievement.unlocked && (
+              <span className="ml-2 text-xs text-green-400">✓</span>
+            )}
           </div>
           <div className="text-sm text-gray-400">{achievement.desc}</div>
         </div>
