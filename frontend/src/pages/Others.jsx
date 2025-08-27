@@ -3,8 +3,11 @@ import React, { useState, useEffect } from "react";
 import "leaflet/dist/leaflet.css";
 import { fetchStuff } from "../service/api.js";
 import OtherUserCard from "../comps/OtherUserCard.jsx";
+import { ArrowBigLeft } from "lucide-react";
+import { useNavigate } from "react-router";
 
 export function Others() {
+  const navigate = useNavigate();
   const position = [19.2183, 72.9781]; // Thane, India
   const [otherUsers, setOtherUsers] = useState([]);
   const [userCoords, setUserCoords] = useState({}); // use object keyed by userId
@@ -63,6 +66,13 @@ export function Others() {
 
   return (
     <div className="w-screen h-screen bg-[#0F1727] flex">
+      <div
+        className="absolute top-4 left-4 flex gap-2 cursor-pointer "
+        onClick={() => navigate(-1)}
+      >
+        <ArrowBigLeft className="text-white" />
+        <h1 className="text-white">Go back</h1>
+      </div>
       {/* Left Side */}
       <div className="w-[50%] h-full flex flex-col p-10">
         <h1 className="text-4xl text-white">
