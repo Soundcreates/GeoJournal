@@ -16,3 +16,15 @@
 .animate-slide-up {
   animation: slideUp 0.3s ease-out forwards;
 }
+
+body {
+  font-family: "Neucha", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
+  font-variation-settings: "slnt" 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}

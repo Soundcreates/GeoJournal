@@ -80,7 +80,6 @@ const App = () => (
       <ErrorProvider>
         <MessageProvider>
           <AppContent />
-          <GlobalChat /> {/* 🔹 Always available */}
         </MessageProvider>
       </ErrorProvider>
     </AuthProvider>

@@ -361,10 +361,10 @@ function OtherProfileSidebar({
             </span>
           </button>
 
-          <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors">
+          {/* <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors">
             <MessageCircle size={16} />
             <span className="text-sm">Message</span>
-          </button>
+          </button> */}
 
           <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors">
             <Share2 size={16} />
@@ -497,17 +497,17 @@ function OtherProfileHeader({
           {isFollowing ? "Following" : "Follow"}
         </button>
 
-        <button
+        {/* <button
           onClick={onMessageUser}
           className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors border border-gray-600"
         >
           <MessageCircle size={16} className="inline mr-2" />
           Message
-        </button>
+        </button> */}
 
-        <button className="p-2 hover:bg-gray-800 rounded-lg transition-colors">
+        {/* <button className="p-2 hover:bg-gray-800 rounded-lg transition-colors">
           <MoreHorizontal size={20} className="text-gray-400" />
-        </button>
+        </button> */}
       </div>
     </div>
   );

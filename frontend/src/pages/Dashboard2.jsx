@@ -483,15 +483,15 @@ function JournalEntriesSection({
         {filteredEntries.map((entry) => (
           <div
             key={entry.id}
-            onClick={() =>
-              setViewJournal({
-                mode: true,
-                entry_id: entry.id,
-              })
-            }
+            // onClick={() =>
+            //   setViewJournal({
+            //     mode: true,
+            //     entry_id: entry.id,
+            //   })
+            // }
             className="cursor-pointer"
           >
-            <JournalCard entry={entry} />
+            <JournalCard setViewJournal={setViewJournal} entry={entry} />
           </div>
         ))}
       </div>
