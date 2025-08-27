@@ -67,15 +67,15 @@ const JournalCard = ({ setViewJournal, entry, key }) => {
           className="flex items-start justify-between mb-3"
           onClick={() => setViewJournal({ mode: true, entry_id: entry.id })}
         >
-          <h3 className="font-bold text-lg text-gray-900 line-clamp-1">
+          <h3 className="font-bold text-lg text-white line-clamp-1 hover:scale-105 hover:text-gray-300 transition-all duration-300">
             {entry.title}
           </h3>
-          <button className="text-gray-400 hover:text-gray-600">
+          <button className="text-gray-400 hover:text-gray-300">
             <MoreHorizontal className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="flex items-center text-gray-600 text-sm mb-3">
+        <div className="flex items-center text-gray-300 text-sm mb-3 hover:scale-105 transition-all duration-300">
           <MapPin className="w-4 h-4 mr-1" />
           <span>{entry.location}</span>
           <span className="mx-2">•</span>
@@ -83,12 +83,12 @@ const JournalCard = ({ setViewJournal, entry, key }) => {
           <span>{entry.createdAt}</span>
         </div>
 
-        <p className="text-gray-700 text-sm leading-relaxed mb-4 line-clamp-2">
+        <p className="text-gray-200 text-sm leading-relaxed mb-4 line-clamp-2">
           {entry.aiCaption}
         </p>
 
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4 text-gray-500">
+          <div className="flex items-center space-x-4 text-gray-300">
             <button className="flex items-center space-x-1 hover:text-red-500 transition-colors">
               <Heart
                 className={`w-4 h-4 ${liked.status ? "text-red-500" : ""}`}
