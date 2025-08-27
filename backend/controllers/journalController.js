@@ -1,5 +1,5 @@
 const journalModel = require("../models/journalModel");
-const geminiModel = require("../gemini-practice/gemini-start");
+const geminiModel = require("../geminiAi/gemini-start");
 const dayjs = require("dayjs");
 const userModel = require("../models/userModel");
 const mongoose = require("mongoose");
