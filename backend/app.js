@@ -33,7 +33,7 @@ connectDB();
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", process.env.FRONTEND_URL],
     credentials: true,
   })
 );
@@ -81,7 +81,7 @@ app.get(
   "/api/auth/google/login/callback",
   passport.authenticate("google-login", {
     session: false,
-    failureRedirect: "http://localhost:5173/login?error=user_not_found",
+    failureRedirect: `${process.env.FRONTEND_URL}/login?error=user_not_found`,
   }),
   (req, res) => {
     try {
@@ -101,11 +101,11 @@ app.get(
         expiresIn: "7d",
       });
       res.redirect(
-        `http://localhost:5173/oauth-success?token=${token}&userInfo=${userInfo}`
+        `${process.env.FRONTEND_URL}/oauth-success?token=${token}&userInfo=${userInfo}`
       );
     } catch (err) {
       console.error("Error in callback: ", err);
-      res.redirect("http://localhost:5173/?error=callback_error");
+      res.redirect(`${process.env.FRONTEND_URL}/?error=callback_error`);
     }
   }
 );
@@ -122,7 +122,7 @@ app.get(
   "/api/auth/google/register/callback",
   passport.authenticate("google-register", {
     session: false,
-    failureRedirect: "http://localhost:5173/register?error=user_already_exists",
+    failureRedirect: `${process.env.FRONTEND_URL}/register?error=user_already_exists`,
   }),
   (req, res) => {
     try {
@@ -143,11 +143,11 @@ app.get(
       );
       console.log("Token received: ", token);
       res.redirect(
-        `http://localhost:5173/oauth-success?token=${token}&userInfo=${userInfo}`
+        `${process.env.FRONTEND_URL}/oauth-success?token=${token}&userInfo=${userInfo}`
       );
     } catch (err) {
       console.error("Error in callback: ", err);
-      res.redirect("http://localhost:5173/register?error=callback_error");
+      res.redirect(`${process.env.FRONTEND_URL}/register?error=callback_error`);
     }
   }
 );
