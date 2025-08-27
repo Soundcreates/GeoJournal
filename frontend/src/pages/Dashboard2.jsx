@@ -203,11 +203,11 @@ function Sidebar({ handleNavigateProfile }) {
 
       {/* Settings Section */}
       <div className="mt-auto">
-        <h3 className="text-gray-400 text-xs uppercase tracking-wide mb-4">
+        <h3 className="hidden text-gray-400 text-xs uppercase tracking-wide mb-4">
           Settings
         </h3>
-        <nav className="space-y-2">
-          <SidebarItem icon={Settings} label="Settings" />
+        <nav className="space-y-2 ">
+          {/* <SidebarItem icon={Settings} label="Settings" /> */}
           <div onClick={handleNavigateProfile}>
             <SidebarItem icon={Users} label="Profile" />
           </div>
