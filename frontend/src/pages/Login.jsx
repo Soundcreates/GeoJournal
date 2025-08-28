@@ -70,7 +70,7 @@ export default function Login() {
     console.log("Google login clicked");
     setLoading(true);
     try {
-      window.location.href = "http://localhost:5000/api/auth/google/login";
+      await fetchStuff.get("/auth/google/login");
     } catch (err) {
       console.error("Google login error: ", err.message);
     }
