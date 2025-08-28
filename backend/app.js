@@ -21,8 +21,6 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
 ].filter(Boolean); // this is to remove any undefined values (type assertion yes)
 
-//pass socket server to messageSocket.js file
-messageSocket(io);
 // Load env variables
 dotenv.config();
 
@@ -66,6 +64,9 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+
+//pass socket server to messageSocket.js file
+messageSocket(io);
 
 // Routes
 const journalRouter = require("./routes/journalRoutes.js");
