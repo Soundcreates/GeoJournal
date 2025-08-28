@@ -18,8 +18,8 @@ export default function Register() {
     confirmPassword: "",
     currentLocation: {
       city: null,
-      country: null
-    }
+      country: null,
+    },
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -62,8 +62,11 @@ export default function Register() {
       let locationData = locationName;
 
       if (locationLoading) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        locationData = locationName || { city: "Unknown City", country: "Unknown Country" };
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        locationData = locationName || {
+          city: "Unknown City",
+          country: "Unknown Country",
+        };
       }
       //call backend API to register user
       const response = await fetchStuff.post("/auth/register", {
@@ -74,7 +77,7 @@ export default function Register() {
         currentLocation: {
           city: formData.currentLocation.city || "Unknown City",
           country: formData.currentLocation.country || "Unknown Country",
-        }
+        },
       });
       if (response.status === 201) {
         setUser(response.data.user);
@@ -96,7 +99,7 @@ export default function Register() {
     console.log("Google register clicked");
     setLoading(true);
     try {
-      window.location.href = "http://localhost:5000/api/auth/google/register";
+      await fetchStuff.get("/api/auth/google/register");
     } catch (err) {
       console.error("Google login error: ", err.message);
     }
@@ -120,7 +123,8 @@ export default function Register() {
           </div>
           <h2 className="text-4xl font-bold mb-4">Join GeoJournal</h2>
           <p className="text-xl text-emerald-100 max-w-md">
-            Start documenting your adventures and connect with explorers worldwide
+            Start documenting your adventures and connect with explorers
+            worldwide
           </p>
         </div>
         {/* Decorative elements */}
@@ -306,10 +310,11 @@ export default function Register() {
                     onChange={(e) =>
                       handleInputChange("confirmPassword", e.target.value)
                     }
-                    className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${formData.confirmPassword && !passwordsMatch
-                      ? "border-red-300 bg-red-50"
-                      : "border-gray-300"
-                      }`}
+                    className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                      formData.confirmPassword && !passwordsMatch
+                        ? "border-red-300 bg-red-50"
+                        : "border-gray-300"
+                    }`}
                     placeholder="Confirm your password"
                     required
                   />
@@ -369,7 +374,10 @@ export default function Register() {
               <button
                 type="submit"
                 disabled={
-                  loading || !isPasswordValid || !passwordsMatch || !agreedToTerms
+                  loading ||
+                  !isPasswordValid ||
+                  !passwordsMatch ||
+                  !agreedToTerms
                 }
                 className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-xl transition-colors flex items-center justify-center"
               >
@@ -423,13 +431,19 @@ export default function Register() {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                <span className="text-sm font-medium text-gray-700">Google</span>
+                <span className="text-sm font-medium text-gray-700">
+                  Google
+                </span>
               </button>
               <button
                 type="button"
                 className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
               >
-                <svg className="w-5 h-5 mr-2" fill="#1877F2" viewBox="0 0 24 24">
+                <svg
+                  className="w-5 h-5 mr-2"
+                  fill="#1877F2"
+                  viewBox="0 0 24 24"
+                >
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                 </svg>
                 <span className="text-sm font-medium text-gray-700">
