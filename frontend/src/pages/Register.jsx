@@ -407,11 +407,11 @@ export default function Register() {
             </div>
 
             {/* Social Buttons */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="w-full">
               <button
                 type="button"
                 onClick={handleGoogleRegister}
-                className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
+                className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path
