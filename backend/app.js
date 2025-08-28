@@ -14,10 +14,12 @@ const { Server } = require("socket.io");
 //implementing websockets
 const server = createServer(app);
 
-//creating socket server
-const io = new Server(server, {
-  cors: { origin: "http://localhost:5173" },
-});
+//defining allowed origins
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://geo-journal.vercel.app",
+  process.env.FRONTEND_URL,
+].filter(Boolean); // this is to remove any undefined values (type assertion yes)
 
 //pass socket server to messageSocket.js file
 messageSocket(io);
@@ -31,14 +33,29 @@ require("./config/passport");
 connectDB();
 
 // Middleware
+
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://geo-journal.vercel.app"],
+    origin: function (origin, callback) {
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+//creating socket server
+const io = new Server(server, {
+  cors: { origin: allowedOrigins },
+});
 
 app.use(
   session({
