@@ -435,7 +435,7 @@ export default function Register() {
                   Google
                 </span>
               </button>
-              <button
+              {/* <button
                 type="button"
                 className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
               >
@@ -449,7 +449,7 @@ export default function Register() {
                 <span className="text-sm font-medium text-gray-700">
                   Facebook
                 </span>
-              </button>
+              </button> */}
             </div>
           </div>
 
