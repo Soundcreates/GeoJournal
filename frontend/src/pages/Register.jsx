@@ -99,7 +99,7 @@ export default function Register() {
     console.log("Google register clicked");
     setLoading(true);
     try {
-      await fetchStuff.get("/api/auth/google/register");
+      await fetchStuff.get("/auth/google/register");
     } catch (err) {
       console.error("Google login error: ", err.message);
     }
