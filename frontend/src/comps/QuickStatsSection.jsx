@@ -10,7 +10,7 @@ import {useEffect, useState} from "react";
 import {fetchStuff} from "../service/api.js";
 
 function Charts() {
-    const [journals, setJournals ] = useState([]);
+    const [_journals, setJournals ] = useState([]);
     const [data, setData] = useState([]);
 
     useEffect(() => {

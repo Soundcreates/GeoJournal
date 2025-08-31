@@ -1,10 +1,10 @@
 // App.jsx
 import { BrowserRouter, Routes, Route } from "react-router";
-import { useAuth } from "./context/AuthContext";
+import { useAuth } from "./context/useAuth.js";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard2 from "./pages/Dashboard2.jsx";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthContext.jsx";
 import NotFound from "./pages/NotFound";
 import Loader from "./pages/Loader";
 import ProfilePage from "./pages/ProfilePage";
@@ -14,10 +14,11 @@ import { ErrorProvider } from "./context/errorContext";
 import { Others } from "./pages/Others.jsx";
 import OtherUserProfile from "./pages/OtherUserProfile.jsx";
 import ProtectedRoutes from "./context/ProtectedRoutes.jsx";
-import { MessageProvider, useMessage } from "./context/messageContext.jsx";
+import { MessageProvider } from "./context/messageContext.jsx";
+import { useMessage } from "./context/useMessage.js";
 import MessageModal from "./comps/MessageModal.jsx";
 import { MessageCircle } from "lucide-react"; // chat icon
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 
 const AppContent = () => {
   const { loading } = useAuth();

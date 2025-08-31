@@ -1,8 +1,7 @@
-import React, { useState, useContext, createContext } from "react";
+import React, { useState } from "react";
+import { ErrorContext } from "./ErrorContext.js";
 
-export const ErrorContext = createContext();
-
-export const ErrorProvider = ({ children }) => {
+export function ErrorProvider({ children }) {
   const [error, setError] = useState(null);
 
   return (
@@ -10,9 +9,4 @@ export const ErrorProvider = ({ children }) => {
       {children}
     </ErrorContext.Provider>
   );
-};
-
-export const useError = () => {
-  const content = useContext(ErrorContext);
-  return content;
-};
+}

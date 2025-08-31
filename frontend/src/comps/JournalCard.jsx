@@ -10,7 +10,7 @@ import {
 import { fetchStuff } from "../service/api.js";
 import useShare from "../hooks/useShare.jsx";
 
-const JournalCard = ({ setViewJournal, entry, key }) => {
+const JournalCard = ({ setViewJournal, entry }) => {
   const { handleShare } = useShare();
   const [liked, setLiked] = useState({
     status: false,

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router";
 import { MapPin, Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { fetchStuff } from "../service/api";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth.js";
 import useGetLocation from "../hooks/useGetLocation";
 import Loader from "../pages/Loader.jsx";
 import Earth from "../../components/uilayouts/globe.jsx";
@@ -19,7 +19,7 @@ export default function Login() {
       country: null,
     },
   });
-  const { locationName } = useGetLocation();
+  const { locationName, loading: locationLoading } = useGetLocation();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -33,13 +33,10 @@ export default function Login() {
     console.log("Form Data:", formData);
 
     try {
-      let locationData = locationName;
+      const _locationData = locationName;
       if (locationLoading) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        locationData = locationName || {
-          city: "Unknown City",
-          country: "Unknown Country",
-        };
+        // Use locationName directly instead of locationData
       }
       const response = await fetchStuff.post("/auth/login", {
         email: formData.email,

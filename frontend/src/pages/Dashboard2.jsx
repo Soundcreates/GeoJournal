@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import Loader from "./Loader.jsx";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth } from "../context/useAuth.js";
 import { fetchStuff } from "../service/api.js";
 import JournalCard from "../comps/JournalCard.jsx";
 import StatCard from "../comps/StatCard.jsx";
@@ -226,7 +226,7 @@ function Sidebar({ handleNavigateProfile }) {
 }
 
 // Individual sidebar navigation item
-function SidebarItem({ icon: Icon, label, active = false, onClick }) {
+function SidebarItem({ label, active = false, onClick }) {
   return (
     <div
       className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
@@ -391,7 +391,7 @@ function StatsGrid({ stats }) {
 }
 
 // Individual stat card component for dark theme
-function StatCardDark({ icon: Icon, label, value, color }) {
+function StatCardDark({ label, value, color }) {
   return (
     <div className="bg-gray-800 rounded-xl p-6 border border-[#c0c6fc]/20 hover:border-[#c0c6fc]/40 transition-colors shadow-lg">
       <div className="flex items-center justify-between mb-4">
@@ -461,9 +461,7 @@ function JournalEntriesSection({
   viewMode,
   filteredEntries,
   setViewJournal,
-  searchTerm,
   setSearchTerm,
-  selectedFilter,
   setSelectedFilter,
 }) {
   return (

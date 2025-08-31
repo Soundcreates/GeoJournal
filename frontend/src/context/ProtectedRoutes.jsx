@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "./useAuth.js";
 import { Loader } from "lucide-react";
 import { Navigate } from "react-router";
 import { Outlet } from "react-router";
