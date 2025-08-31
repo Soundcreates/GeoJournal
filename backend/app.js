@@ -17,6 +17,7 @@ const server = createServer(app);
 //defining allowed origins
 const allowedOrigins = [
   "http://localhost:5173",
+  "http://localhost:3000", // Additional common dev port
   "https://geo-journal.vercel.app",
   process.env.FRONTEND_URL,
 ].filter(Boolean); // this is to remove any undefined values (type assertion yes)
@@ -35,11 +36,28 @@ connectDB();
 app.use(
   cors({
     origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps, server-to-server, etc.)
+      if (!origin) {
+        return callback(null, true);
+      }
+      
+      // Allow any localhost origin in development
+      if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+        return callback(null, true);
+      }
+      
+      // Check if origin is in allowed list
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
-      } else {
-        return callback(new Error("Not allowed by CORS"));
       }
+      
+      // Allow Vercel preview deployments (they follow pattern: https://geo-journal-*.vercel.app)
+      if (origin.includes('vercel.app') && origin.includes('geo-journal')) {
+        return callback(null, true);
+      }
+      
+      console.log(`CORS blocked origin: ${origin}`);
+      return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -52,7 +70,32 @@ app.use(express.urlencoded({ extended: true }));
 
 //creating socket server
 const io = new Server(server, {
-  cors: { origin: allowedOrigins },
+  cors: { 
+    origin: function (origin, callback) {
+      // Allow requests with no origin
+      if (!origin) {
+        return callback(null, true);
+      }
+      
+      // Allow any localhost origin in development
+      if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+        return callback(null, true);
+      }
+      
+      // Check if origin is in allowed list
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      
+      // Allow Vercel preview deployments
+      if (origin.includes('vercel.app') && origin.includes('geo-journal')) {
+        return callback(null, true);
+      }
+      
+      return callback(null, false);
+    },
+    credentials: true 
+  },
 });
 
 app.use(
@@ -187,6 +230,7 @@ app.use((err, req, res, next) => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+  console.log(`Allowed CORS origins:`, allowedOrigins);
 });
