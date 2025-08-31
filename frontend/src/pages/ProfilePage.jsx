@@ -21,7 +21,7 @@ import {
   Edit
 } from "lucide-react";
 import { useParams, useNavigate } from "react-router";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth.js";
 import { fetchStuff } from "../service/api";
 import useGetLocation from "../hooks/useGetLocation";
 import Loader from "./Loader";
@@ -31,7 +31,7 @@ import Logout from "../comps/Logout";
 const ProfilePage = () => {
   const navigate = useNavigate();
   const { user, loading: userLoading, getUser } = useAuth();
-  const { userId } = useParams();
+  const { userId: _userId } = useParams();
 
   // UI States
   const [selectedEntry, setSelectedEntry] = useState(null);
@@ -40,7 +40,7 @@ const ProfilePage = () => {
 
   // Data States
   const [recentEntries, setRecentEntries] = useState([]);
-  const [currentLocation, setCurrentLocation] = useState(() => {
+  const [currentLocation, _setCurrentLocation] = useState(() => {
     try {
       const storedLocation = localStorage.getItem("userLocation");
       if (storedLocation) {
@@ -226,7 +226,7 @@ function ProfileSidebar({ navigate }) {
 }
 
 // Individual sidebar navigation item
-function SidebarItem({ icon: Icon, label, active = false, onClick }) {
+function SidebarItem({ label, active = false, onClick }) {
   return (
     <div
       className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${active ? 'bg-[#656fe2] text-white' : 'text-gray-300 hover:bg-gray-700'
@@ -312,7 +312,7 @@ function ProfileHeader({ user }) {
 
 // Profile hero section with user details and stats
 function ProfileHero({ user, currentLocation, stats }) {
-  const { otherUser } = useParams();
+  const { otherUser: _otherUser } = useParams();
   return (
     <div className="bg-gradient-to-r from-[#656fe2] to-purple-600 rounded-2xl p-8 mb-8 shadow-2xl border border-[#c0c6fc]/30">
       <div className="flex flex-col md:flex-row items-center md:items-start gap-6">

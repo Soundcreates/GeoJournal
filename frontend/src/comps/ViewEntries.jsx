@@ -1,7 +1,7 @@
 // frontend/src/components/ViewEntries.jsx
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth.js';
 import { fetchStuff } from '../service/api';
 
 function ViewEntries({ setOpenTravelMap }) {

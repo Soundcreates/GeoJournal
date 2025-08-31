@@ -1,6 +1,5 @@
-import React, { useState, useContext, createContext } from "react";
-
-export const MessageContext = createContext();
+import React, { useState } from "react";
+import { MessageContext } from "./MessageContext.js";
 
 export function MessageProvider({ children }) {
   const [openMessageModal, setOpenMessageModal] = useState(false);
@@ -16,8 +15,3 @@ export function MessageProvider({ children }) {
     <MessageContext.Provider value={value}>{children}</MessageContext.Provider>
   );
 }
-
-export const useMessage = () => {
-  let content = useContext(MessageContext);
-  return content;
-};

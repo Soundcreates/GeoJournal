@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import Loader from "./Loader.jsx";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth } from "../context/useAuth.js";
 import { fetchStuff } from "../service/api.js";
 import JournalCard from "../comps/JournalCard.jsx";
 import StatCard from "../comps/StatCard.jsx";
@@ -36,7 +36,7 @@ export default function Dashboard() {
   const [viewMode, setViewMode] = useState("grid");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
-  const [likedEntries, setLikedEntries] = useState(new Set([1, 3]));
+  const [_likedEntries, setLikedEntries] = useState(new Set([1, 3]));
   const [countries, setCountries] = useState([]);
   const [viewJournal, setViewJournal] = useState({
     mode: false,
@@ -92,7 +92,7 @@ export default function Dashboard() {
     thisMonth: user.recentEntries,
   };
 
-  const handleLike = (entryId) => {
+  const _handleLike = (entryId) => {
     setLikedEntries((prev) => {
       const newLiked = new Set(prev);
       if (newLiked.has(entryId)) {

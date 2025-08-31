@@ -1,5 +1,5 @@
 import React from "react";
-import { useMessage } from "../context/messageContext";
+import { useMessage } from "../context/useMessage.js";
 
 function MessageModal() {
   const { setOpenMessageModal } = useMessage();

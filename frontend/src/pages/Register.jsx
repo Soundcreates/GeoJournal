@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router";
 import { MapPin, Eye, EyeOff, Mail, Lock, User, Check, X } from "lucide-react";
 import { fetchStuff } from "../service/api";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth.js";
 import useGetLocation from "../hooks/useGetLocation";
 import Earth from "../../components/uilayouts/globe.jsx";
 
 export default function Register() {
   const { locationName, loading: locationLoading } = useGetLocation();
-  const { loading, setLoading, setUser, setFirstName } = useAuth();
+  const { loading, setLoading, setUser } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
@@ -59,14 +59,11 @@ export default function Register() {
 
     setLoading(true);
     try {
-      let locationData = locationName;
+      const _locationData = locationName;
 
       if (locationLoading) {
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        locationData = locationName || {
-          city: "Unknown City",
-          country: "Unknown Country",
-        };
+        // Use locationName directly
       }
       //call backend API to register user
       const response = await fetchStuff.post("/auth/register", {

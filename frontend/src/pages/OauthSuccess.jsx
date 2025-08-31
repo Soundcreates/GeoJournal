@@ -1,7 +1,7 @@
 // frontend/src/pages/OauthSuccess.jsx
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth.js";
 
 export default function OauthSuccess() {
   const [searchParams] = useSearchParams();

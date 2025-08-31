@@ -70,7 +70,7 @@ function AddEntry() {
   const [locationName, setLocationName] = useState(
     "Central park, kolshet road, thane"
   );
-  const [isLoading, setIsLoading] = useState(false);
+  const [_isLoading, setIsLoading] = useState(false);
   const [geminiLoading, setGeminiLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -82,7 +82,7 @@ function AddEntry() {
     coordinates: markerLocation ? [markerLocation.lat, markerLocation.lng] : [],
     country: country
   });
-  const testingCords = {
+  const _testingCords = {
     lat: 19.2322,
     lng: 72.9781,
   };

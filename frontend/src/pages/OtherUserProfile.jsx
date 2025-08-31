@@ -24,9 +24,9 @@ import {
   Flag,
 } from "lucide-react";
 import { useParams, useNavigate } from "react-router";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth.js";
 import { fetchStuff } from "../service/api";
-import { useMessage } from "../context/messageContext";
+import { useMessage } from "../context/useMessage.js";
 
 const OtherUserProfile = () => {
   //  user ID from URL params
@@ -35,7 +35,7 @@ const OtherUserProfile = () => {
   // UI States
   const [selectedEntry, setSelectedEntry] = useState(null);
   const { user: currentUser, loading } = useAuth(); //  current user (the logged-in user viewing the profile) with loading state from authContext
-  const [isLoaded, setIsLoaded] = useState(!loading);
+  const [_isLoaded] = useState(!loading);
   const [openTravelMap, setOpenTravelMap] = useState(false);
   const [specificUser, setSpecificUser] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
@@ -99,7 +99,7 @@ const OtherUserProfile = () => {
 
   // Recent entries state
   const [recentEntries, setRecentEntries] = useState([]);
-  const [userError, setUserError] = useState(null);
+  const [_userError] = useState(null);
 
   // Fetch recent entries for the specific user
   useEffect(() => {
@@ -192,12 +192,12 @@ const OtherUserProfile = () => {
   }
 
   // Show error if user not found
-  if (userError) {
+  if (_userError) {
     return (
       <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-400 font-bold text-xl mb-2">User not found</p>
-          <p className="text-gray-400">{userError}</p>
+          <p className="text-gray-400">{_userError}</p>
         </div>
       </div>
     );
@@ -306,7 +306,7 @@ const OtherUserProfile = () => {
         setSelectedEntry={setSelectedEntry}
         setOpenTravelMap={setOpenTravelMap}
         achievements={achievements}
-        isLoaded={isLoaded}
+        isLoaded={_isLoaded}
         isFollowing={isFollowing}
         onFollowToggle={handleFollowToggle}
         onMessageUser={handleMessageUser}
@@ -318,7 +318,6 @@ const OtherUserProfile = () => {
 // Sidebar Component for Other User Profile
 function OtherProfileSidebar({
   navigate,
-  specificUser,
   isFollowing,
   onFollowToggle,
 }) {
@@ -402,7 +401,7 @@ function OtherProfileSidebar({
 }
 
 // Individual sidebar navigation item
-function SidebarItem({ icon: Icon, label, active = false, onClick }) {
+function SidebarItem({ label, active = false, onClick }) {
   return (
     <div
       className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
@@ -419,7 +418,6 @@ function SidebarItem({ icon: Icon, label, active = false, onClick }) {
 // Main content area for other user profile
 function MainOtherProfileContent({
   specificUser,
-  currentUser,
   currentLocation,
   stats,
   recentEntries,
@@ -469,7 +467,6 @@ function OtherProfileHeader({
   specificUser,
   isFollowing,
   onFollowToggle,
-  onMessageUser,
 }) {
   return (
     <div className="flex items-center justify-between mb-8">

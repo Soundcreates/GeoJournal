@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth.js";
 import { MapPin, User, Globe, Search } from "lucide-react";
 
 function Header({ searchTerm, setSearchTerm, handleNavigateProfile }) {
